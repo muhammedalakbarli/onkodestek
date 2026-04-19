@@ -1,0 +1,37 @@
+import { NextRequest, NextResponse } from "next/server";
+import { db } from "@/lib/db";
+import { patients } from "@/drizzle/schema";
+import { eq } from "drizzle-orm";
+
+// GET /api/patients — ictimai (verified/active/funded) xəstələri gətir
+export async function GET() {
+  try {
+    const list = await db
+      .select()
+      .from(patients)
+      .where(eq(patients.isPublic, true))
+      .orderBy(patients.createdAt);
+
+    return NextResponse.json(list);
+  } catch (err) {
+    console.error(err);
+    return NextResponse.json({ error: "Server xətası" }, { status: 500 });
+  }
+}
+
+// POST /api/patients — admin: yeni xəstə əl ilə əlavə et
+export async function POST(req: NextRequest) {
+  const adminSecret = req.headers.get("x-admin-secret");
+  if (adminSecret !== process.env.ADMIN_SECRET) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    const body = await req.json();
+    const [patient] = await db.insert(patients).values(body).returning();
+    return NextResponse.json(patient, { status: 201 });
+  } catch (err) {
+    console.error(err);
+    return NextResponse.json({ error: "Server xətası" }, { status: 500 });
+  }
+}
