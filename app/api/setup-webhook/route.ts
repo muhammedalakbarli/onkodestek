@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
 
   const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? "https://onkodestek.vercel.app").trim();
   const webhookUrl = `${appUrl}/api/telegram`.trim();
-  const webhookSecret = process.env.TELEGRAM_WEBHOOK_SECRET;
+  const webhookSecret = process.env.TELEGRAM_WEBHOOK_SECRET?.trim();
 
   const params: Record<string, unknown> = {
     url: webhookUrl,
