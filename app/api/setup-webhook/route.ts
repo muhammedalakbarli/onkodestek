@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { bot } from "@/lib/telegram";
 
 export async function GET(req: NextRequest) {
   const secret = req.nextUrl.searchParams.get("secret");
@@ -7,20 +6,35 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  if (!token) {
+    return NextResponse.json({ error: "TELEGRAM_BOT_TOKEN yoxdur" }, { status: 500 });
+  }
+
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://onkodestek.vercel.app";
   const webhookUrl = `${appUrl}/api/telegram`;
   const webhookSecret = process.env.TELEGRAM_WEBHOOK_SECRET;
 
-  await bot.api.setWebhook(webhookUrl, {
-    secret_token: webhookSecret,
+  const params: Record<string, unknown> = {
+    url: webhookUrl,
     allowed_updates: ["message", "callback_query"],
+  };
+  if (webhookSecret) params.secret_token = webhookSecret;
+
+  const res = await fetch(`https://api.telegram.org/bot${token}/setWebhook`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(params),
   });
 
-  const info = await bot.api.getWebhookInfo();
+  const result = await res.json();
 
-  return NextResponse.json({
-    ok: true,
-    webhook_url: webhookUrl,
-    info,
-  });
+  if (!result.ok) {
+    return NextResponse.json({ error: result.description, result }, { status: 500 });
+  }
+
+  const infoRes = await fetch(`https://api.telegram.org/bot${token}/getWebhookInfo`);
+  const info = await infoRes.json();
+
+  return NextResponse.json({ ok: true, webhook_url: webhookUrl, info });
 }
