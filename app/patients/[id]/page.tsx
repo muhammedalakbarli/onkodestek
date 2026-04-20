@@ -96,9 +96,18 @@ export default async function PatientPage({
 
           <div className="p-6 md:p-8">
             <div className="flex items-start gap-5">
-              <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${avatarColor} flex items-center justify-center text-white font-extrabold text-2xl shrink-0 shadow-md`}>
-                {patient.fullName.charAt(0)}
-              </div>
+              {patient.photoUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={patient.photoUrl}
+                  alt={patient.fullName}
+                  className="w-16 h-16 rounded-2xl object-cover shrink-0 shadow-md"
+                />
+              ) : (
+                <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${avatarColor} flex items-center justify-center text-white font-extrabold text-2xl shrink-0 shadow-md`}>
+                  {patient.fullName.charAt(0)}
+                </div>
+              )}
               <div className="flex-1 min-w-0">
                 <div className="flex flex-wrap items-center gap-2 mb-1">
                   <h1 className="text-2xl font-bold text-slate-900">{patient.fullName}</h1>

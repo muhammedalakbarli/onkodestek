@@ -41,9 +41,18 @@ export default function PatientCard({ patient }: { patient: Patient }) {
         <div className="p-5 flex flex-col gap-4 flex-1">
           {/* Ad + status */}
           <div className="flex items-start gap-3">
-            <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${avatarColor} flex items-center justify-center text-white font-bold text-lg shrink-0 shadow-sm`}>
-              {patient.fullName.charAt(0)}
-            </div>
+            {patient.photoUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={patient.photoUrl}
+                alt={patient.fullName}
+                className="w-12 h-12 rounded-xl object-cover shrink-0 shadow-sm"
+              />
+            ) : (
+              <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${avatarColor} flex items-center justify-center text-white font-bold text-lg shrink-0 shadow-sm`}>
+                {patient.fullName.charAt(0)}
+              </div>
+            )}
             <div className="flex-1 min-w-0">
               <div className="flex items-start justify-between gap-2">
                 <p className="font-semibold text-slate-900 leading-snug group-hover:text-blue-700 transition-colors">
