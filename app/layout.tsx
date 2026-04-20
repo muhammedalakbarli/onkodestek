@@ -8,16 +8,35 @@ const inter = Inter({
   display: "swap",
 });
 
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://onkodestek.vercel.app";
+
 export const metadata: Metadata = {
-  title: "onkodəstək — Həyata dəstək ol",
+  metadataBase: new URL(APP_URL),
+  title: {
+    default: "onkodəstək — Həyata dəstək ol",
+    template: "%s | onkodəstək",
+  },
   description:
     "Azərbaycanda onkoloji xəstəliklərlə mübarizə aparan şəxslərə şəffaf xeyriyyəçilik platforması. Hər ianənin hara xərcləndiyini real vaxt rejimində izləyin.",
-  keywords: ["xeyriyyə", "onkologiya", "xərçəng", "Azerbaijan", "şəffaflıq"],
+  keywords: ["xeyriyyə", "onkologiya", "xərçəng", "Azərbaycan", "şəffaflıq", "ianə", "onkodestek"],
+  authors: [{ name: "onkodəstək" }],
+  creator: "onkodəstək",
   openGraph: {
-    title: "onkodəstək",
-    description: "Həyata dəstək ol — Şəffaf onkoloji yardım platforması",
+    title: "onkodəstək — Həyata dəstək ol",
+    description: "Azərbaycanda onkoloji xəstəliklərə qarşı şəffaf xeyriyyəçilik platforması.",
+    url: APP_URL,
+    siteName: "onkodəstək",
     locale: "az_AZ",
     type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "onkodəstək — Həyata dəstək ol",
+    description: "Azərbaycanda onkoloji xəstəliklərə qarşı şəffaf xeyriyyəçilik platforması.",
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 };
 

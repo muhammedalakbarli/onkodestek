@@ -18,7 +18,8 @@ export default function DashboardLayout({
   return (
     <div className="flex min-h-screen bg-slate-50">
       <AdminSidebar />
-      <div className="ml-56 flex-1 min-h-screen overflow-auto">
+      {/* Mobil: pt-14 (üst bar yüksəkliyi), Desktop: ml-56 */}
+      <div className="flex-1 min-h-screen overflow-auto pt-14 lg:pt-0 lg:ml-56">
         {children}
       </div>
     </div>

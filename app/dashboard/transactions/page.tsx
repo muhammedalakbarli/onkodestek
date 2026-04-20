@@ -30,6 +30,7 @@ export default async function AdminTransactionsPage() {
         category:       transactions.category,
         description:    transactions.description,
         receiptUrl:     transactions.receiptUrl,
+        donorUserId:     transactions.donorUserId,
         donorName:      transactions.donorName,
         donorTelegramId: transactions.donorTelegramId,
         isAnonymous:    transactions.isAnonymous,
@@ -48,14 +49,14 @@ export default async function AdminTransactionsPage() {
   } catch { /* boş */ }
 
   return (
-    <div className="p-8">
+    <div className="p-4 sm:p-6 lg:p-8">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-slate-900">Maliyyə əməliyyatları</h1>
         <p className="text-slate-500 text-sm mt-1">Bütün ianə və xərclərin tam tarixçəsi</p>
       </div>
 
       {/* Xülasə */}
-      <div className="grid sm:grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-6">
         <div className="bg-emerald-50 border border-emerald-100 rounded-2xl p-5">
           <p className="text-xs font-semibold text-emerald-600 uppercase tracking-wide mb-1">Cəmi ianə</p>
           <p className="text-2xl font-extrabold text-emerald-700">{formatCurrency(totalDonations)}</p>

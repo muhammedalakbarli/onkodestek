@@ -36,16 +36,14 @@ export default async function AdminPatientsPage() {
   } catch { /* boş */ }
 
   return (
-    <div className="p-8">
-      <div className="flex items-start justify-between mb-8">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900">Müraciətlər</h1>
-          <p className="text-slate-500 text-sm mt-1">Bütün xəstə müraciətlərini idarə edin</p>
-        </div>
+    <div className="p-4 sm:p-6 lg:p-8">
+      <div className="mb-6">
+        <h1 className="text-xl sm:text-2xl font-bold text-slate-900">Müraciətlər</h1>
+        <p className="text-slate-500 text-sm mt-1">Bütün xəstə müraciətlərini idarə edin</p>
       </div>
 
       {/* Sayaçlar */}
-      <div className="grid grid-cols-4 gap-3 mb-7">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
         {[
           { label: "Cəmi",       value: counts.total,   color: "text-slate-700",   bg: "bg-slate-50 border-slate-200" },
           { label: "Gözləyir",   value: counts.pending, color: "text-amber-700",   bg: "bg-amber-50 border-amber-200" },

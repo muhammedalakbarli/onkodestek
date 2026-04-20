@@ -1,4 +1,10 @@
 import Navbar from "@/components/Navbar";
+import type { Metadata } from "next";
+export const metadata: Metadata = {
+  title: "Şəffaflıq",
+  description: "Bütün ianələr və xərclər real vaxtda açıqlanır. Hər qəpiyin hara getdiyini izləyin.",
+};
+
 import { db } from "@/lib/db";
 import { transactions, patients } from "@/drizzle/schema";
 import { formatCurrency, formatDate } from "@/lib/utils";
@@ -30,6 +36,7 @@ export default async function TransparencyPage() {
         category: transactions.category,
         description: transactions.description,
         receiptUrl: transactions.receiptUrl,
+        donorUserId: transactions.donorUserId,
         donorName: transactions.donorName,
         donorTelegramId: transactions.donorTelegramId,
         isAnonymous: transactions.isAnonymous,

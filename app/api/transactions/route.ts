@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { transactions, patients } from "@/drizzle/schema";
 import { eq, sql } from "drizzle-orm";
+import { isAdmin } from "@/lib/adminAuth";
 
 // GET /api/transactions — bütün əməliyyatları gətir (ictimai)
 export async function GET() {
@@ -20,8 +21,7 @@ export async function GET() {
 
 // POST /api/transactions — admin: ianə və ya xərc əlavə et
 export async function POST(req: NextRequest) {
-  const adminSecret = req.headers.get("x-admin-secret");
-  if (adminSecret !== process.env.ADMIN_SECRET) {
+  if (!(await isAdmin(req))) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

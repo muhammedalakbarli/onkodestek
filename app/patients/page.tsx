@@ -5,7 +5,12 @@ import { patients } from "@/drizzle/schema";
 import type { Patient } from "@/drizzle/schema";
 import { eq } from "drizzle-orm";
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
+
+export const metadata = {
+  title: "Xəstələr",
+  description: "Tibbi sənədləri yoxlanılmış xəstələrin aktiv yardım kampaniyaları. Hər xəstəyə birbaşa dəstək ol.",
+};
 
 export default async function PatientsPage() {
   let list: Patient[] = [];

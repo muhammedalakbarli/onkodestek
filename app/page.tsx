@@ -3,11 +3,11 @@ import Navbar from "@/components/Navbar";
 import PatientCard from "@/components/PatientCard";
 import StatCard from "@/components/StatCard";
 import { db } from "@/lib/db";
-import { patients } from "@/drizzle/schema";
-import { eq } from "drizzle-orm";
+import { patients, transactions } from "@/drizzle/schema";
+import { eq, sql, sum, count } from "drizzle-orm";
 import { formatCurrency } from "@/lib/utils";
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 
 async function getPublicPatients() {
   try {
@@ -21,16 +21,40 @@ async function getPublicPatients() {
   }
 }
 
-export default async function HomePage() {
-  const publicPatients = await getPublicPatients();
+async function getStats() {
+  try {
+    const [ps] = await db
+      .select({
+        active:    sql<number>`count(*) filter (where status = 'active')`,
+        funded:    sql<number>`count(*) filter (where status = 'funded')`,
+        totalCollected: sum(patients.collectedAmount),
+      })
+      .from(patients);
 
-  const totalCollected = publicPatients.reduce(
-    (sum, p) => sum + parseFloat(String(p.collectedAmount)),
-    0
-  );
-  const activeCount = publicPatients.filter((p) => p.status === "active").length;
-  const fundedCount  = publicPatients.filter((p) => p.status === "funded").length;
-  const donorCount   = 0; // gələcəkdə DB-dən çəkiləcək
+    const [ts] = await db
+      .select({
+        donationCount: sql<number>`count(*) filter (where type = 'donation')`,
+      })
+      .from(transactions);
+
+    return {
+      activeCount:    Number(ps.active ?? 0),
+      fundedCount:    Number(ps.funded ?? 0),
+      totalCollected: parseFloat(String(ps.totalCollected ?? "0")),
+      donationCount:  Number(ts.donationCount ?? 0),
+    };
+  } catch {
+    return { activeCount: 0, fundedCount: 0, totalCollected: 0, donationCount: 0 };
+  }
+}
+
+export default async function HomePage() {
+  const [publicPatients, stats] = await Promise.all([
+    getPublicPatients(),
+    getStats(),
+  ]);
+
+  const { activeCount, fundedCount, totalCollected, donationCount } = stats;
 
   return (
     <>
@@ -140,10 +164,10 @@ export default async function HomePage() {
             accent="purple"
           />
           <StatCard
-            title="Şəffaflıq"
-            value="100%"
-            subtitle="hər xərc qəbzlə açıqlanır"
-            icon="🔍"
+            title="Ümumi ianə"
+            value={donationCount}
+            subtitle="ayrı-ayrı ianə"
+            icon="🤝"
             accent="orange"
           />
         </div>
@@ -293,6 +317,8 @@ export default async function HomePage() {
                 <div className="flex flex-col gap-2">
                   <Link href="/patients" className="hover:text-white transition-colors">Xəstələr</Link>
                   <Link href="/transparency" className="hover:text-white transition-colors">Şəffaflıq</Link>
+                  <Link href="/apply" className="hover:text-white transition-colors">Müraciət et</Link>
+                  <Link href="/about" className="hover:text-white transition-colors">Haqqımızda</Link>
                 </div>
               </div>
               <div>
@@ -304,8 +330,13 @@ export default async function HomePage() {
               </div>
             </div>
           </div>
-          <div className="border-t border-slate-800 mt-10 pt-6 text-xs text-slate-600 text-center">
-            © 2026 onkodəstək — Həyata dəstək ol
+          <div className="border-t border-slate-800 mt-10 pt-6 text-xs text-slate-600 text-center space-y-2">
+            <div>© 2026 onkodəstək — Həyata dəstək ol</div>
+            <div className="flex justify-center gap-4">
+              <Link href="/privacy" className="hover:text-slate-400 transition-colors">Məxfilik siyasəti</Link>
+              <Link href="/terms" className="hover:text-slate-400 transition-colors">İstifadə şərtləri</Link>
+              <Link href="/about" className="hover:text-slate-400 transition-colors">Haqqımızda</Link>
+            </div>
           </div>
         </div>
       </footer>

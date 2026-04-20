@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import type { Patient } from "@/drizzle/schema";
 
@@ -22,6 +22,23 @@ const EXPENSE_CATEGORIES = [
 
 type Tab = "status" | "expense" | "donation";
 
+async function uploadFile(file: File, folder: string): Promise<string> {
+  const fd = new FormData();
+  fd.append("file", file);
+  fd.append("folder", folder);
+  const res = await fetch("/api/upload", {
+    method: "POST",
+    headers: { "x-admin-secret": getAdminSecret() },
+    body: fd,
+  });
+  if (!res.ok) {
+    const e = await res.json().catch(() => ({}));
+    throw new Error(e.error ?? "Fayl yükləmə xətası");
+  }
+  const { url } = await res.json();
+  return url as string;
+}
+
 export default function PatientActions({ patient }: { patient: Patient }) {
   const router  = useRouter();
   const [tab, setTab]         = useState<Tab>("status");
@@ -29,19 +46,24 @@ export default function PatientActions({ patient }: { patient: Patient }) {
   const [msg, setMsg]         = useState<{ type: "ok" | "err"; text: string } | null>(null);
 
   // Status formu
-  const [status,   setStatus]   = useState(patient.status);
-  const [isPublic, setIsPublic] = useState(patient.isPublic);
+  const [status,      setStatus]      = useState(patient.status);
+  const [isPublic,    setIsPublic]     = useState(patient.isPublic);
+  const [photoFile,   setPhotoFile]    = useState<File | null>(null);
+  const [docFile,     setDocFile]      = useState<File | null>(null);
+  const photoRef = useRef<HTMLInputElement>(null);
+  const docRef   = useRef<HTMLInputElement>(null);
 
   // Xərc formu
-  const [expAmount,   setExpAmount]   = useState("");
-  const [expCategory, setExpCategory] = useState("medication");
-  const [expDesc,     setExpDesc]     = useState("");
-  const [expReceipt,  setExpReceipt]  = useState("");
+  const [expAmount,      setExpAmount]      = useState("");
+  const [expCategory,    setExpCategory]    = useState("medication");
+  const [expDesc,        setExpDesc]        = useState("");
+  const [receiptFile,    setReceiptFile]    = useState<File | null>(null);
+  const receiptRef = useRef<HTMLInputElement>(null);
 
   // İanə formu
-  const [donAmount,   setDonAmount]   = useState("");
-  const [donName,     setDonName]     = useState("");
-  const [donAnon,     setDonAnon]     = useState(false);
+  const [donAmount, setDonAmount] = useState("");
+  const [donName,   setDonName]   = useState("");
+  const [donAnon,   setDonAnon]   = useState(false);
 
   function flash(type: "ok" | "err", text: string) {
     setMsg({ type, text });
@@ -50,20 +72,41 @@ export default function PatientActions({ patient }: { patient: Patient }) {
 
   async function saveStatus() {
     setLoading(true);
-    const res = await fetch(`/api/patients/${patient.id}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        "x-admin-secret": getAdminSecret(),
-      },
-      body: JSON.stringify({ status, isPublic }),
-    });
-    setLoading(false);
-    if (res.ok) {
-      flash("ok", "Status yeniləndi");
-      router.refresh();
-    } else {
-      flash("err", "Xəta baş verdi");
+    try {
+      let photoUrl: string | undefined;
+      let documentUrl: string | undefined;
+
+      if (photoFile) photoUrl = await uploadFile(photoFile, "photos");
+      if (docFile)   documentUrl = await uploadFile(docFile, "documents");
+
+      const res = await fetch(`/api/patients/${patient.id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          "x-admin-secret": getAdminSecret(),
+        },
+        body: JSON.stringify({
+          status,
+          isPublic,
+          ...(photoUrl    && { photoUrl }),
+          ...(documentUrl && { documentUrl }),
+        }),
+      });
+
+      if (res.ok) {
+        flash("ok", "Dəyişikliklər saxlanıldı");
+        setPhotoFile(null);
+        setDocFile(null);
+        if (photoRef.current)  photoRef.current.value  = "";
+        if (docRef.current)    docRef.current.value    = "";
+        router.refresh();
+      } else {
+        flash("err", "Xəta baş verdi");
+      }
+    } catch (e: unknown) {
+      flash("err", e instanceof Error ? e.message : "Xəta baş verdi");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -71,28 +114,38 @@ export default function PatientActions({ patient }: { patient: Patient }) {
     e.preventDefault();
     if (!expAmount) return;
     setLoading(true);
-    const res = await fetch("/api/transactions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-admin-secret": getAdminSecret(),
-      },
-      body: JSON.stringify({
-        patientId:   patient.id,
-        type:        "expense",
-        amount:      parseFloat(expAmount),
-        category:    expCategory,
-        description: expDesc || null,
-        receiptUrl:  expReceipt || null,
-      }),
-    });
-    setLoading(false);
-    if (res.ok) {
-      flash("ok", "Xərc əlavə edildi");
-      setExpAmount(""); setExpDesc(""); setExpReceipt("");
-      router.refresh();
-    } else {
-      flash("err", "Xəta baş verdi");
+    try {
+      let receiptUrl: string | undefined;
+      if (receiptFile) receiptUrl = await uploadFile(receiptFile, "receipts");
+
+      const res = await fetch("/api/transactions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-admin-secret": getAdminSecret(),
+        },
+        body: JSON.stringify({
+          patientId:   patient.id,
+          type:        "expense",
+          amount:      parseFloat(expAmount),
+          category:    expCategory,
+          description: expDesc || null,
+          receiptUrl:  receiptUrl ?? null,
+        }),
+      });
+
+      if (res.ok) {
+        flash("ok", "Xərc əlavə edildi");
+        setExpAmount(""); setExpDesc(""); setReceiptFile(null);
+        if (receiptRef.current) receiptRef.current.value = "";
+        router.refresh();
+      } else {
+        flash("err", "Xəta baş verdi");
+      }
+    } catch (e: unknown) {
+      flash("err", e instanceof Error ? e.message : "Xəta baş verdi");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -187,6 +240,52 @@ export default function PatientActions({ patient }: { patient: Patient }) {
               </span>
             </label>
 
+            {/* Foto yüklə */}
+            <div>
+              <label className="block text-xs font-semibold text-slate-600 mb-1.5">
+                Xəstə fotosu
+                {patient.photoUrl && (
+                  <a href={patient.photoUrl} target="_blank" rel="noopener noreferrer"
+                    className="ml-2 text-blue-600 font-normal hover:underline">
+                    mövcud foto ↗
+                  </a>
+                )}
+              </label>
+              <input
+                ref={photoRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={(e) => setPhotoFile(e.target.files?.[0] ?? null)}
+                className="w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-600 hover:file:bg-blue-100"
+              />
+              {photoFile && (
+                <p className="text-xs text-slate-400 mt-1">{photoFile.name}</p>
+              )}
+            </div>
+
+            {/* Sənəd yüklə */}
+            <div>
+              <label className="block text-xs font-semibold text-slate-600 mb-1.5">
+                Tibbi sənəd (PDF/şəkil)
+                {patient.documentUrl && (
+                  <a href={patient.documentUrl} target="_blank" rel="noopener noreferrer"
+                    className="ml-2 text-blue-600 font-normal hover:underline">
+                    mövcud sənəd ↗
+                  </a>
+                )}
+              </label>
+              <input
+                ref={docRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp,application/pdf"
+                onChange={(e) => setDocFile(e.target.files?.[0] ?? null)}
+                className="w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-slate-50 file:text-slate-600 hover:file:bg-slate-100"
+              />
+              {docFile && (
+                <p className="text-xs text-slate-400 mt-1">{docFile.name}</p>
+              )}
+            </div>
+
             <button
               onClick={saveStatus}
               disabled={loading}
@@ -236,21 +335,26 @@ export default function PatientActions({ patient }: { patient: Patient }) {
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1.5">Qəbz URL-i (istəğə bağlı)</label>
+              <label className="block text-xs font-semibold text-slate-600 mb-1.5">
+                Qəbz (fayl yüklə — JPG, PNG, PDF)
+              </label>
               <input
-                type="url"
-                value={expReceipt}
-                onChange={(e) => setExpReceipt(e.target.value)}
-                placeholder="https://..."
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                ref={receiptRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp,application/pdf"
+                onChange={(e) => setReceiptFile(e.target.files?.[0] ?? null)}
+                className="w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-orange-50 file:text-orange-600 hover:file:bg-orange-100"
               />
+              {receiptFile && (
+                <p className="text-xs text-slate-400 mt-1">{receiptFile.name}</p>
+              )}
             </div>
             <button
               type="submit"
               disabled={loading}
               className="w-full bg-orange-500 hover:bg-orange-600 disabled:opacity-60 text-white font-semibold py-2.5 rounded-xl text-sm transition-colors"
             >
-              {loading ? "Əlavə edilir..." : "Xərci qeyd et"}
+              {loading ? "Yüklənir..." : "Xərci qeyd et"}
             </button>
           </form>
         )}
@@ -309,9 +413,7 @@ export default function PatientActions({ patient }: { patient: Patient }) {
   );
 }
 
-// Cookie-dən admin secreti oxumaq əvəzinə localStorage istifadə edirik
-// (cookie httpOnly olduğu üçün JS-dən oxunmur; session storage-də saxlayırıq)
 function getAdminSecret(): string {
   if (typeof window === "undefined") return "";
-  return sessionStorage.getItem("admin_secret") ?? "";
+  return localStorage.getItem("admin_secret") ?? "";
 }

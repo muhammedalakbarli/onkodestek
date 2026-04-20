@@ -68,14 +68,14 @@ export default async function DashboardPage() {
   };
 
   return (
-    <div className="p-8">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-slate-900">İcmal</h1>
+    <div className="p-4 sm:p-6 lg:p-8">
+      <div className="mb-6">
+        <h1 className="text-xl sm:text-2xl font-bold text-slate-900">İcmal</h1>
         <p className="text-slate-500 text-sm mt-1">Platformanın ümumi vəziyyəti</p>
       </div>
 
       {/* Stat kartları */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
         {[
           { label: "Ümumi müraciət",   value: stats.totalPatients,   icon: "M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z", bg: "bg-blue-100 text-blue-600", border: "border-blue-100" },
           { label: "Yoxlanılır",        value: stats.pendingPatients, icon: "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z", bg: "bg-amber-100 text-amber-600", border: "border-amber-100" },
@@ -95,7 +95,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* Maliyyə xülasəsi */}
-      <div className="grid lg:grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-6">
         <div className="bg-emerald-50 border border-emerald-100 rounded-2xl p-5">
           <p className="text-xs font-semibold text-emerald-600 uppercase tracking-wide mb-1">Cəmi toplanıb</p>
           <p className="text-2xl font-extrabold text-emerald-700">{formatCurrency(stats.totalDonations)}</p>
@@ -110,7 +110,7 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Son müraciətlər */}
         <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
           <div className="flex items-center justify-between px-5 py-4 border-b border-slate-50">

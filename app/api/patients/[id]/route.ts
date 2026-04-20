@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { patients, transactions } from "@/drizzle/schema";
 import { eq } from "drizzle-orm";
+import { isAdmin } from "@/lib/adminAuth";
 
 export async function GET(
   _req: NextRequest,
@@ -36,17 +37,26 @@ export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const adminSecret = req.headers.get("x-admin-secret");
-  if (adminSecret !== process.env.ADMIN_SECRET) {
+  if (!(await isAdmin(req))) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const { id } = await params;
   try {
     const body = await req.json();
+
+    // Status "active" və ya "funded" olduqda isPublic avtomatik true olsun
+    // Status "pending" və ya "closed" olduqda isPublic false olsun
+    const autoPublic =
+      body.status === "active" || body.status === "funded"
+        ? { isPublic: true }
+        : body.status === "pending" || body.status === "closed"
+        ? { isPublic: false }
+        : {};
+
     const [updated] = await db
       .update(patients)
-      .set({ ...body, updatedAt: new Date() })
+      .set({ ...body, ...autoPublic, updatedAt: new Date() })
       .where(eq(patients.id, parseInt(id)))
       .returning();
 

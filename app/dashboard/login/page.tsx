@@ -21,8 +21,8 @@ export default function LoginPage() {
     });
 
     if (res.ok) {
-      // API çağırıları üçün sessionStorage-də saxla (JWT cookie httpOnly-dir)
-      sessionStorage.setItem("admin_secret", password);
+      // API çağırıları üçün localStorage-də saxla (JWT cookie httpOnly-dir)
+      localStorage.setItem("admin_secret", password);
       router.push("/dashboard");
       router.refresh();
     } else {
