@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
+import PhotoLightbox from "@/components/PhotoLightbox";
 import ProgressBar from "@/components/ProgressBar";
 import { db } from "@/lib/db";
 import { patients, transactions } from "@/drizzle/schema";
@@ -97,8 +98,7 @@ export default async function PatientPage({
           <div className="p-6 md:p-8">
             <div className="flex items-start gap-5">
               {patient.photoUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
+                <PhotoLightbox
                   src={patient.photoUrl}
                   alt={patient.fullName}
                   className="w-16 h-16 rounded-2xl object-cover shrink-0 shadow-md"
