@@ -11,8 +11,8 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "TELEGRAM_BOT_TOKEN yoxdur" }, { status: 500 });
   }
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://onkodestek.vercel.app";
-  const webhookUrl = `${appUrl}/api/telegram`;
+  const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? "https://onkodestek.vercel.app").trim();
+  const webhookUrl = `${appUrl}/api/telegram`.trim();
   const webhookSecret = process.env.TELEGRAM_WEBHOOK_SECRET;
 
   const params: Record<string, unknown> = {
@@ -30,7 +30,7 @@ export async function GET(req: NextRequest) {
   const result = await res.json();
 
   if (!result.ok) {
-    return NextResponse.json({ error: result.description, result }, { status: 500 });
+    return NextResponse.json({ error: result.description, webhook_url: webhookUrl, result }, { status: 500 });
   }
 
   const infoRes = await fetch(`https://api.telegram.org/bot${token}/getWebhookInfo`);
