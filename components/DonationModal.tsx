@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Check } from "lucide-react";
 
 interface Props {
   patientName: string;
@@ -92,7 +93,7 @@ export default function DonationModal({ patientName, trackId }: Props) {
                           : "bg-blue-50 text-blue-600 hover:bg-blue-100"
                       }`}
                     >
-                      {copied === "iban" ? "✓ Kopyalandı" : "Kopyala"}
+                      {copied === "iban" ? <><Check className="w-3 h-3 inline mr-0.5" />Kopyalandı</> : "Kopyala"}
                     </button>
                   </div>
                 </div>
@@ -112,7 +113,7 @@ export default function DonationModal({ patientName, trackId }: Props) {
                           : "bg-blue-50 text-blue-600 hover:bg-blue-100"
                       }`}
                     >
-                      {copied === "ref" ? "✓ Kopyalandı" : "Kopyala"}
+                      {copied === "ref" ? <><Check className="w-3 h-3 inline mr-0.5" />Kopyalandı</> : "Kopyala"}
                     </button>
                   </div>
                 </div>

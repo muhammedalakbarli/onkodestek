@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Link from "next/link";
+import { Search, ShieldCheck, Heart, Zap } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Haqqımızda",
@@ -10,22 +11,26 @@ export const metadata: Metadata = {
 
 const VALUES = [
   {
-    icon: "🔍",
+    Icon: Search,
+    color: "text-blue-600 bg-blue-50",
     title: "Şəffaflıq",
     desc: "Toplanmış hər qəpik açıq şəkildə hesabat verilir. Heç bir xərc qəbzsiz edilmir.",
   },
   {
-    icon: "✅",
+    Icon: ShieldCheck,
+    color: "text-emerald-600 bg-emerald-50",
     title: "Etibarlılıq",
     desc: "Hər müraciət sənəd yoxlamasından keçir. Yalnız təsdiqlənmiş xəstələr ictimaiyyətə açılır.",
   },
   {
-    icon: "💙",
+    Icon: Heart,
+    color: "text-rose-600 bg-rose-50",
     title: "İnsanlıq",
     desc: "Biz yardımı rəqəmsallaşdırırıq, amma insanı mərkəzdə saxlayırıq.",
   },
   {
-    icon: "⚡",
+    Icon: Zap,
+    color: "text-amber-600 bg-amber-50",
     title: "Sürət",
     desc: "Müraciətlər 1–3 iş günü ərzində yoxlanılır. Vəsait birbaşa xəstəyə çatır.",
   },
@@ -77,7 +82,9 @@ export default function AboutPage() {
           <div className="grid grid-cols-2 gap-4">
             {VALUES.map((v) => (
               <div key={v.title} className="bg-slate-50 border border-slate-100 rounded-2xl p-5">
-                <span className="text-3xl mb-3 block">{v.icon}</span>
+                <div className={`w-9 h-9 rounded-xl flex items-center justify-center mb-3 ${v.color}`}>
+                  <v.Icon className="w-5 h-5" strokeWidth={1.8} />
+                </div>
                 <h3 className="font-bold text-slate-900 mb-1 text-sm">{v.title}</h3>
                 <p className="text-xs text-slate-500 leading-relaxed">{v.desc}</p>
               </div>

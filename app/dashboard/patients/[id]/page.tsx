@@ -6,6 +6,7 @@ import { eq, sql } from "drizzle-orm";
 import { formatCurrency, formatDate, calcProgress } from "@/lib/utils";
 import PatientActions from "./PatientActions";
 import DeletePatientButton from "./DeletePatientButton";
+import { Building2, Phone } from "lucide-react";
 
 export const revalidate = 0;
 
@@ -80,10 +81,16 @@ export default async function AdminPatientDetailPage({
                 </div>
                 <p className="text-slate-600 text-sm">{patient.diagnosis}</p>
                 {patient.hospitalName && (
-                  <p className="text-xs text-slate-400 mt-1">🏥 {patient.hospitalName}</p>
+                  <p className="flex items-center gap-1.5 text-xs text-slate-400 mt-1">
+                    <Building2 className="w-3.5 h-3.5 shrink-0" strokeWidth={1.8} />
+                    {patient.hospitalName}
+                  </p>
                 )}
                 {patient.contactPhone && (
-                  <p className="text-xs text-slate-400 mt-0.5">📞 {patient.contactPhone}</p>
+                  <p className="flex items-center gap-1.5 text-xs text-slate-400 mt-0.5">
+                    <Phone className="w-3.5 h-3.5 shrink-0" strokeWidth={1.8} />
+                    {patient.contactPhone}
+                  </p>
                 )}
               </div>
             </div>

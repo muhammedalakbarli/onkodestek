@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { patients } from "@/drizzle/schema";
 import { sql } from "drizzle-orm";
 import { formatCurrency, formatDate } from "@/lib/utils";
+import { CheckCircle2 } from "lucide-react";
 
 export const revalidate = 0;
 
@@ -96,7 +97,7 @@ export default async function AdminPatientsPage() {
                   </td>
                   <td className="px-5 py-4 text-center">
                     {p.isPublic
-                      ? <span className="text-emerald-500 font-bold text-base">✓</span>
+                      ? <CheckCircle2 className="w-4 h-4 text-emerald-500 mx-auto" strokeWidth={2.5} />
                       : <span className="text-slate-300">—</span>}
                   </td>
                   <td className="px-5 py-4 text-xs text-slate-400 whitespace-nowrap">

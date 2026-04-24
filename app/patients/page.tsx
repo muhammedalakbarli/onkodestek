@@ -1,6 +1,7 @@
 import Navbar from "@/components/Navbar";
 import PatientFilter from "@/components/PatientFilter";
 import Footer from "@/components/Footer";
+import { CheckCircle2, Building2 } from "lucide-react";
 import { db } from "@/lib/db";
 import { patients } from "@/drizzle/schema";
 import type { Patient } from "@/drizzle/schema";
@@ -49,7 +50,8 @@ export default async function PatientsPage() {
               </span>
               {fundedCount > 0 && (
                 <span className="inline-flex items-center gap-1.5 text-xs font-semibold bg-violet-50 text-violet-700 border border-violet-200 px-3 py-1 rounded-full">
-                  ✓ {fundedCount} tamamlandı
+                  <CheckCircle2 className="w-3.5 h-3.5" strokeWidth={2} />
+                  {fundedCount} tamamlandı
                 </span>
               )}
             </div>
@@ -60,8 +62,8 @@ export default async function PatientsPage() {
       <main className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
         {list.length === 0 ? (
           <div className="text-center py-24">
-            <div className="w-20 h-20 bg-slate-100 rounded-2xl flex items-center justify-center text-4xl mx-auto mb-5">
-              🏥
+            <div className="w-20 h-20 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-5">
+              <Building2 className="w-9 h-9 text-slate-400" strokeWidth={1.5} />
             </div>
             <h2 className="text-xl font-bold text-slate-700 mb-2">Hələlik açıq müraciət yoxdur</h2>
             <p className="text-slate-400 text-sm mb-6">Yeni kampaniyalar üçün Telegram botunu izləyin.</p>

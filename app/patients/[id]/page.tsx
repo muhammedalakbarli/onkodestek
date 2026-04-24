@@ -6,6 +6,7 @@ import ProgressBar from "@/components/ProgressBar";
 import DonationModal from "@/components/DonationModal";
 import ShareButtons from "@/components/ShareButtons";
 import Footer from "@/components/Footer";
+import { Heart, Receipt } from "lucide-react";
 import { db } from "@/lib/db";
 import { patients, transactions } from "@/drizzle/schema";
 import { eq } from "drizzle-orm";
@@ -194,7 +195,9 @@ export default async function PatientPage({
           <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
             <div className="flex items-center justify-between px-5 py-4 border-b border-slate-50">
               <h2 className="font-bold text-slate-900 flex items-center gap-2">
-                <span className="w-7 h-7 bg-emerald-100 rounded-lg flex items-center justify-center text-sm">💙</span>
+                <span className="w-7 h-7 bg-emerald-100 rounded-lg flex items-center justify-center">
+                  <Heart className="w-4 h-4 text-emerald-600" strokeWidth={2} />
+                </span>
                 İanələr
               </h2>
               <span className="text-xs font-semibold bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">
@@ -228,7 +231,9 @@ export default async function PatientPage({
           <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
             <div className="flex items-center justify-between px-5 py-4 border-b border-slate-50">
               <h2 className="font-bold text-slate-900 flex items-center gap-2">
-                <span className="w-7 h-7 bg-orange-100 rounded-lg flex items-center justify-center text-sm">🧾</span>
+                <span className="w-7 h-7 bg-orange-100 rounded-lg flex items-center justify-center">
+                  <Receipt className="w-4 h-4 text-orange-600" strokeWidth={2} />
+                </span>
                 Xərclər
               </h2>
               <span className="text-xs font-semibold bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">
