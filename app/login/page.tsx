@@ -84,7 +84,7 @@ export default async function LoginPage({
         <div className="w-full max-w-sm">
           <h1 className="text-2xl font-bold text-slate-900 mb-1">Xoş gəldiniz</h1>
           <p className="text-slate-500 text-sm mb-8">
-            Daxil olun — ianə tarixçənizi görün
+            Daxil olun və ya qonaq kimi platformaya baxın
           </p>
 
           {/* Xəta mesajı */}
@@ -102,13 +102,12 @@ export default async function LoginPage({
           {/* Google giriş düyməsi */}
           <form action={async () => {
             "use server";
-            await signIn("google", { redirectTo: callbackUrl ?? "/me" });
+            await signIn("google", { redirectTo: callbackUrl ?? "/patients" });
           }}>
             <button
               type="submit"
-              className="w-full flex items-center justify-center gap-3 bg-white border-2 border-slate-200 hover:border-blue-400 hover:bg-blue-50/30 text-slate-800 font-semibold py-3.5 px-5 rounded-xl transition-all text-sm shadow-sm hover:shadow-md active:scale-[0.98]"
+              className="w-full flex items-center justify-center gap-3 bg-white border-2 border-slate-200 hover:border-teal-400 hover:bg-teal-50/30 text-slate-800 font-semibold py-3.5 px-5 rounded-xl transition-all text-sm shadow-sm hover:shadow-md active:scale-[0.98]"
             >
-              {/* Google logo SVG */}
               <svg viewBox="0 0 24 24" className="w-5 h-5 shrink-0">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                 <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -118,6 +117,21 @@ export default async function LoginPage({
               Google ilə daxil ol
             </button>
           </form>
+
+          {/* Qonaq kimi bax */}
+          <div className="mt-3">
+            <a
+              href="/patients"
+              className="w-full flex items-center justify-center gap-2 border border-slate-200 hover:border-teal-300 hover:bg-teal-50/40 text-slate-600 hover:text-teal-700 font-medium py-3.5 px-5 rounded-xl transition-all text-sm"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+              Qonaq kimi bax
+            </a>
+            <p className="text-xs text-slate-400 text-center mt-2">Müraciət etmək üçün giriş tələb olunur</p>
+          </div>
 
           {/* Xəstə izləmə bölməsi */}
           <div className="mt-8 pt-7 border-t border-slate-100">
@@ -141,7 +155,7 @@ export default async function LoginPage({
                 </button>
               </div>
               <p className="text-xs text-slate-400 mt-2">
-                İzləmə kodunu Telegram botu vasitəsilə müraciət etdikdə alırsınız
+                İzləmə kodunu müraciət etdikdən sonra alırsınız
               </p>
             </form>
           </div>
