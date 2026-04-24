@@ -5,22 +5,13 @@ import { eq } from "drizzle-orm";
 
 export const bot = new Bot(process.env.TELEGRAM_BOT_TOKEN!);
 
-// ── Vəziyyət idarəsi (sadə in-memory, prodda Redis istifadə et) ──────────────
-const sessions = new Map<number, { step: string; data: Partial<{
-  fullName: string;
-  age: string;
-  diagnosis: string;
-  hospitalName: string;
-  contactPhone: string;
-  story: string;
-  goalAmount: string;
-}> }>();
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://onkodestek.vercel.app";
 
 // ── /myid — admin chat ID-sini öyrən ─────────────────────────────────────────
 bot.command("myid", async (ctx) => {
   const id = ctx.from?.id ?? "naməlum";
   await ctx.reply(
-    `🆔 Sizin Telegram Chat ID-niz:\n\n<code>${id}</code>\n\nBu ID-ni ADMIN_TELEGRAM_CHAT_ID olaraq Vercel-ə əlavə edin.`,
+    `🆔 Sizin Telegram Chat ID-niz:\n\n<code>${id}</code>`,
     { parse_mode: "HTML" }
   );
 });
@@ -28,7 +19,7 @@ bot.command("myid", async (ctx) => {
 // ── /start ────────────────────────────────────────────────────────────────────
 bot.command("start", async (ctx) => {
   const keyboard = new InlineKeyboard()
-    .text("📋 Yardım müraciəti", "apply")
+    .url("📋 Yardım müraciəti", `${APP_URL}/apply`)
     .row()
     .text("💙 Psixoloji dəstək", "support")
     .row()
@@ -44,23 +35,12 @@ bot.command("start", async (ctx) => {
     `💙 Psixoloji dəstək\n` +
     `📊 Şəffaf hesabat\n\n` +
     `təqdim edirik.\n\n` +
-    `Aşağıdan sizə lazım olan bölməni seçin:`,
+    `Yardım müraciəti üçün saytımıza daxil olun 👆`,
     { parse_mode: "HTML", reply_markup: keyboard }
   );
 });
 
-// ── Müraciət axını ────────────────────────────────────────────────────────────
-bot.callbackQuery("apply", async (ctx) => {
-  await ctx.answerCallbackQuery();
-  const userId = ctx.from.id;
-  sessions.set(userId, { step: "fullName", data: {} });
-
-  await ctx.reply(
-    "📝 <b>Müraciət forması</b>\n\nZəhmət olmasa, xəstənin <b>tam adını</b> yazın:",
-    { parse_mode: "HTML" }
-  );
-});
-
+// ── Haqqımızda ────────────────────────────────────────────────────────────────
 bot.callbackQuery("about", async (ctx) => {
   await ctx.answerCallbackQuery();
   await ctx.reply(
@@ -69,7 +49,7 @@ bot.callbackQuery("about", async (ctx) => {
     "✅ Hər xəstə sənəd yoxlamasından keçir\n" +
     "✅ Hər ianə birbaşa xəstəyə çatır\n" +
     "✅ Hər xərc qəbzlə ictimaiyyətə açıqlanır\n\n" +
-    "🌐 sayt: onkodestek.vercel.app",
+    `🌐 Sayt: ${APP_URL}`,
     { parse_mode: "HTML" }
   );
 });
@@ -78,7 +58,7 @@ bot.callbackQuery("about", async (ctx) => {
 bot.callbackQuery("track_prompt", async (ctx) => {
   await ctx.answerCallbackQuery();
   await ctx.reply(
-    "🔍 İzləmə kodunuzu yazın:\n\n<code>/izle OKD-XXXXXX</code>",
+    `🔍 İzləmə kodunuzu yazın:\n\n<code>/izle OKD-XXXXXX</code>\n\nVə ya saytda izləyin:\n${APP_URL}/track`,
     { parse_mode: "HTML" }
   );
 });
@@ -119,11 +99,10 @@ bot.callbackQuery("support_breathe", async (ctx) => {
     "3️⃣ Ağzınızdan <b>8 saniyə</b> nəfəs verin\n\n" +
     "Bu dövrü <b>4 dəfə</b> təkrarlayın.\n\n" +
     "━━━━━━━━━━━━━━━\n" +
-    "💡 <i>Hər nəfəs sizin ixtiyarınızdadır. Hazır olduğunuzda başlayın.</i>",
+    "💡 <i>Hər nəfəs sizin ixtiyarınızdadır.</i>",
     {
       parse_mode: "HTML",
-      reply_markup: new InlineKeyboard()
-        .text("💙 Psixoloji dəstəyə qayıt", "support"),
+      reply_markup: new InlineKeyboard().text("💙 Psixoloji dəstəyə qayıt", "support"),
     },
   );
 });
@@ -144,9 +123,7 @@ bot.callbackQuery("support_motivate", async (ctx) => {
   await ctx.answerCallbackQuery();
   const msg = MOTIVATIONAL[Math.floor(Math.random() * MOTIVATIONAL.length)];
   await ctx.reply(
-    `💪 <b>Bu gün sizin üçün:</b>\n\n<i>${msg}</i>\n\n` +
-    "━━━━━━━━━━━━━━━\n" +
-    "Hər gün bu düyməyə basa bilərsiniz. 🌟",
+    `💪 <b>Bu gün sizin üçün:</b>\n\n<i>${msg}</i>`,
     {
       parse_mode: "HTML",
       reply_markup: new InlineKeyboard()
@@ -163,16 +140,14 @@ bot.callbackQuery("support_crisis", async (ctx) => {
   await ctx.reply(
     "😔 <b>Sizinlə birlikdəyik.</b>\n\n" +
     "Pis hiss etmək — tamamilə normaldır. Bu xəstəlik çox ağırdır və hissləriniz əsaslıdır.\n\n" +
-    "Bir neçə şey etməyə çalışın:\n\n" +
     "🌿 <b>İndi, bu anda:</b>\n" +
     "Ətrafınızda 5 şeyə baxın. Onları adlandırın. Bu sizi bu ana qaytaracaq.\n\n" +
     "🤝 <b>Tək olmayın:</b>\n" +
-    "Yanınızda biri varsa — əllərini tutun. Heç nə deməyə ehtiyac yoxdur.\n\n" +
+    "Yanınızda biri varsa — əllərini tutun.\n\n" +
     "💬 <b>Danışmaq istəyirsinizsə:</b>\n" +
     "Bizə yazın: @onkodestek_admin\n\n" +
     "📞 <b>Azərbaycan Psixoloji Yardım Xətti:</b>\n" +
     "<b>860</b> (pulsuz, 24/7)\n\n" +
-    "━━━━━━━━━━━━━━━\n" +
     "<i>Siz bu mübarizəyə layiqsiniz. Biz buradayıq.</i> 💙",
     {
       parse_mode: "HTML",
@@ -194,21 +169,14 @@ bot.callbackQuery("support_family", async (ctx) => {
     "Yaxın birinin xəstəliyini yaşamaq da çox ağırdır. Özünüzü unutmayın.\n\n" +
     "✅ <b>Xəstənizlə necə danışmalı:</b>\n" +
     "• \"Nə hiss edirsən?\" — soruşun, dinləyin\n" +
-    "• Fikirləri düzəltməyə çalışmayın, sadəcə yanında olun\n" +
     "• \"Güclü ol\" deməyin əvəzinə — \"Yanındayam\" deyin\n\n" +
     "✅ <b>Özünüzü qoruyun:</b>\n" +
     "• Hər gün 10 dəqiqə özünüz üçün vaxt ayırın\n" +
-    "• Köməyi rədd etməyin — qəbul etmək güclülükdür\n" +
-    "• Öz hisslərinizi danmayın — qorxu, kədər, yorğunluq — hamısı normaldır\n\n" +
-    "✅ <b>Uşaqlara necə izah etmək:</b>\n" +
-    "Yaşa uyğun sadə dillə həqiqəti söyləyin.\n" +
-    "\"Baba xəstədir, həkimlər müalicə edir, biz birlikdəyik.\"\n\n" +
-    "━━━━━━━━━━━━━━━\n" +
+    "• Köməyi rədd etməyin — qəbul etmək güclülükdür\n\n" +
     "<i>Siz də bu mübarizənin qəhrəmanısınız.</i> 💙",
     {
       parse_mode: "HTML",
-      reply_markup: new InlineKeyboard()
-        .text("💙 Psixoloji dəstəyə qayıt", "support"),
+      reply_markup: new InlineKeyboard().text("💙 Psixoloji dəstəyə qayıt", "support"),
     },
   );
 });
@@ -218,20 +186,16 @@ bot.callbackQuery("support_contact", async (ctx) => {
   await ctx.answerCallbackQuery();
   await ctx.reply(
     "📞 <b>Mütəxəssislə əlaqə</b>\n\n" +
-    "Peşəkar psixoloji dəstək üçün müraciət edin:\n\n" +
     "🏥 <b>Milli Onkologiya Mərkəzi</b>\n" +
     "Psixologiya şöbəsi: +994 12 440-00-84\n\n" +
     "📞 <b>Azərbaycan Psixoloji Yardım Xətti</b>\n" +
     "860 (pulsuz, 24 saat, 7 gün)\n\n" +
     "💬 <b>Onkodəstək könüllü psixoloqları</b>\n" +
-    "Yazın: @onkodestek_admin\n" +
-    "Ən qısa zamanda cavab veririk.\n\n" +
-    "━━━━━━━━━━━━━━━\n" +
+    "Yazın: @onkodestek_admin\n\n" +
     "<i>Kömək istəmək — ən doğru addımdır.</i>",
     {
       parse_mode: "HTML",
-      reply_markup: new InlineKeyboard()
-        .text("« Geri", "support"),
+      reply_markup: new InlineKeyboard().text("« Geri", "support"),
     },
   );
 });
@@ -240,7 +204,7 @@ bot.callbackQuery("support_contact", async (ctx) => {
 bot.callbackQuery("back_main", async (ctx) => {
   await ctx.answerCallbackQuery();
   const keyboard = new InlineKeyboard()
-    .text("📋 Yardım müraciəti", "apply")
+    .url("📋 Yardım müraciəti", `${APP_URL}/apply`)
     .row()
     .text("💙 Psixoloji dəstək", "support")
     .row()
@@ -248,105 +212,7 @@ bot.callbackQuery("back_main", async (ctx) => {
     .row()
     .text("ℹ️ Haqqımızda", "about");
 
-  await ctx.reply(
-    "Ana menyu:",
-    { reply_markup: keyboard }
-  );
-});
-
-// ── Axın mesajları ─────────────────────────────────────────────────────────────
-bot.on("message:text", async (ctx) => {
-  const userId = ctx.from.id;
-  const session = sessions.get(userId);
-  if (!session) return;
-
-  const text = ctx.message.text.trim();
-  const { step, data } = session;
-
-  if (step === "fullName") {
-    data.fullName = text;
-    session.step = "age";
-    await ctx.reply("Xəstənin <b>yaşını</b> yazın (məs: 45):", { parse_mode: "HTML" });
-
-  } else if (step === "age") {
-    if (isNaN(parseInt(text))) {
-      await ctx.reply("Zəhmət olmasa düzgün bir rəqəm yazın:");
-      return;
-    }
-    data.age = text;
-    session.step = "diagnosis";
-    await ctx.reply("Xəstənin <b>diaqnozunu</b> yazın:", { parse_mode: "HTML" });
-
-  } else if (step === "diagnosis") {
-    data.diagnosis = text;
-    session.step = "hospitalName";
-    await ctx.reply("Müalicə olunan <b>xəstəxananın adını</b> yazın:", { parse_mode: "HTML" });
-
-  } else if (step === "hospitalName") {
-    data.hospitalName = text;
-    session.step = "contactPhone";
-    await ctx.reply("Əlaqə üçün <b>telefon nömrəsini</b> yazın (məs: +994501234567):", { parse_mode: "HTML" });
-
-  } else if (step === "contactPhone") {
-    data.contactPhone = text;
-    session.step = "story";
-    await ctx.reply(
-      "Xəstənin <b>hekayəsini</b> qısaca yazın — bu mətn saytda ictimaiyyətə göstəriləcək:",
-      { parse_mode: "HTML" }
-    );
-
-  } else if (step === "story") {
-    data.story = text;
-    session.step = "goalAmount";
-    await ctx.reply(
-      "Ehtiyac duyulan <b>məbləği</b> yazın (yalnız rəqəm, AZN ilə, məs: 2500):",
-      { parse_mode: "HTML" }
-    );
-
-  } else if (step === "goalAmount") {
-    const amount = parseFloat(text.replace(",", "."));
-    if (isNaN(amount) || amount <= 0) {
-      await ctx.reply("Zəhmət olmasa düzgün məbləğ yazın (məs: 2500):");
-      return;
-    }
-    data.goalAmount = amount.toString();
-
-    // Track ID yarat: OKD-XXXXXX (6 simvol, böyük hərf + rəqəm)
-    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-    let suffix = "";
-    for (let i = 0; i < 6; i++) {
-      suffix += chars[Math.floor(Math.random() * chars.length)];
-    }
-    const trackId = `OKD-${suffix}`;
-
-    // DB-ə yaz
-    await db.insert(patients).values({
-      telegramId: userId.toString(),
-      trackId,
-      fullName: data.fullName!,
-      age: parseInt(data.age!),
-      diagnosis: data.diagnosis!,
-      hospitalName: data.hospitalName,
-      contactPhone: data.contactPhone,
-      story: data.story,
-      goalAmount: data.goalAmount,
-      status: "pending",
-    });
-
-    sessions.delete(userId);
-
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://onkodestek.vercel.app";
-
-    await ctx.reply(
-      "✅ <b>Müraciətiniz qəbul edildi!</b>\n\n" +
-      `🔑 <b>İzləmə kodunuz:</b> <code>${trackId}</code>\n\n` +
-      "Bu kodu saxlayın — müraciətinizin statusunu izləmək üçün lazım olacaq.\n\n" +
-      `🔗 İzləmə linki: ${appUrl}/track?id=${trackId}\n\n` +
-      "Komandamız sənədlərinizi yoxladıqdan sonra sizinlə əlaqə saxlayacaq.\n" +
-      "Adətən <b>1-3 iş günü</b> ərzində cavab verilir.",
-      { parse_mode: "HTML" }
-    );
-  }
+  await ctx.reply("Ana menyu:", { reply_markup: keyboard });
 });
 
 // ── /izle <kod> — müraciət statusunu yoxla ────────────────────────────────────
@@ -354,45 +220,48 @@ bot.command("izle", async (ctx) => {
   const arg = ctx.match?.trim().toUpperCase();
   if (!arg) {
     await ctx.reply(
-      "Zəhmət olmasa izləmə kodunuzu yazın:\n<code>/izle OKD-XXXXXX</code>",
+      `Zəhmət olmasa izləmə kodunuzu yazın:\n<code>/izle OKD-XXXXXX</code>\n\nVə ya saytda: ${APP_URL}/track`,
       { parse_mode: "HTML" }
     );
     return;
   }
 
-  const [p] = await db
-    .select()
-    .from(patients)
-    .where(eq(patients.trackId, arg))
-    .limit(1);
+  try {
+    const [p] = await db
+      .select()
+      .from(patients)
+      .where(eq(patients.trackId, arg))
+      .limit(1);
 
-  if (!p) {
-    await ctx.reply(`❌ <b>${arg}</b> koduna uyğun müraciət tapılmadı.`, { parse_mode: "HTML" });
-    return;
+    if (!p) {
+      await ctx.reply(`❌ <b>${arg}</b> koduna uyğun müraciət tapılmadı.`, { parse_mode: "HTML" });
+      return;
+    }
+
+    const statusLabel: Record<string, string> = {
+      pending:  "⏳ Gözləyir",
+      verified: "✅ Sənəd yoxlandı",
+      active:   "🟢 Aktiv yığım",
+      funded:   "🎉 Tam maliyyələşdi",
+      closed:   "🔒 Bağlandı",
+    };
+
+    const collected = parseFloat(p.collectedAmount as string);
+    const goal      = parseFloat(p.goalAmount as string);
+    const percent   = goal > 0 ? Math.min(Math.round((collected / goal) * 100), 100) : 0;
+
+    await ctx.reply(
+      `📋 <b>Müraciət: ${p.trackId}</b>\n\n` +
+      `👤 ${p.fullName}\n` +
+      `🏥 ${p.hospitalName ?? "—"}\n` +
+      `📊 Status: ${statusLabel[p.status] ?? p.status}\n\n` +
+      `💰 Yığılan: <b>${collected.toLocaleString("az-AZ")} ₼</b> / ${goal.toLocaleString("az-AZ")} ₼ (${percent}%)\n\n` +
+      `🔗 ${APP_URL}/track?id=${p.trackId}`,
+      { parse_mode: "HTML" }
+    );
+  } catch {
+    await ctx.reply("Xəta baş verdi. Bir az sonra yenidən cəhd edin.");
   }
-
-  const statusEmoji: Record<string, string> = {
-    pending:  "⏳ Gözləyir",
-    verified: "✅ Sənəd yoxlandı",
-    active:   "🟢 Aktiv yığım",
-    funded:   "🎉 Tam maliyyələşdi",
-    closed:   "🔒 Bağlandı",
-  };
-
-  const collected = parseFloat(p.collectedAmount as string);
-  const goal      = parseFloat(p.goalAmount as string);
-  const percent   = goal > 0 ? Math.min(Math.round((collected / goal) * 100), 100) : 0;
-  const appUrl    = process.env.NEXT_PUBLIC_APP_URL ?? "https://onkodestek.vercel.app";
-
-  await ctx.reply(
-    `📋 <b>Müraciət: ${p.trackId}</b>\n\n` +
-    `👤 ${p.fullName}\n` +
-    `🏥 ${p.hospitalName ?? "—"}\n` +
-    `📊 Status: ${statusEmoji[p.status] ?? p.status}\n\n` +
-    `💰 Yığılan: <b>${collected.toLocaleString("az-AZ")} ₼</b> / ${goal.toLocaleString("az-AZ")} ₼ (${percent}%)\n\n` +
-    `🔗 ${appUrl}/track?id=${p.trackId}`,
-    { parse_mode: "HTML" }
-  );
 });
 
 // ── Webhook handler ───────────────────────────────────────────────────────────

@@ -107,7 +107,7 @@ export default function ApplyPage() {
           <div className="flex flex-col gap-2">
             <Link
               href={`/track?id=${trackId}`}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl text-sm transition-colors"
+              className="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3 rounded-xl text-sm transition-colors"
             >
               Müraciəti izlə
             </Link>
@@ -125,27 +125,16 @@ export default function ApplyPage() {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      {/* Header */}
+      {/* Başlıq + addım göstəricisi */}
       <div className="bg-white border-b border-slate-200">
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 py-5">
-          <div className="flex items-center gap-3 mb-3">
-            <Link href="/" className="text-slate-400 hover:text-slate-600 transition-colors">
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
-              </svg>
-            </Link>
-            <div>
-              <h1 className="text-lg font-bold text-slate-900">Yardım müraciəti</h1>
-              <p className="text-xs text-slate-400">
-                Addım {step === "step1" ? 1 : 2} / 2
-              </p>
-            </div>
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 py-4">
+          <div className="flex items-center justify-between mb-3">
+            <h1 className="text-lg font-bold text-slate-900">Yardım müraciəti</h1>
+            <span className="text-xs text-slate-400 font-medium">Addım {step === "step1" ? 1 : 2} / 2</span>
           </div>
-
-          {/* Addım göstəricisi */}
           <div className="flex gap-2">
-            <div className="h-1.5 flex-1 rounded-full bg-blue-600" />
-            <div className={`h-1.5 flex-1 rounded-full transition-all ${step === "step2" ? "bg-blue-600" : "bg-slate-200"}`} />
+            <div className="h-1.5 flex-1 rounded-full bg-teal-600" />
+            <div className={`h-1.5 flex-1 rounded-full transition-all ${step === "step2" ? "bg-teal-600" : "bg-slate-200"}`} />
           </div>
         </div>
       </div>
@@ -169,7 +158,7 @@ export default function ApplyPage() {
                   <select
                     value={form.relation}
                     onChange={set("relation")}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-800"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent text-slate-800"
                   >
                     {RELATIONS.map((r) => (
                       <option key={r} value={r}>{r}</option>
@@ -220,7 +209,7 @@ export default function ApplyPage() {
                 setError("");
                 setStep("step2");
               }}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3.5 rounded-xl text-sm transition-colors"
+              className="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3.5 rounded-xl text-sm transition-colors"
             >
               Növbəti addım →
             </button>
@@ -249,7 +238,7 @@ export default function ApplyPage() {
                     placeholder="Xəstənin vəziyyətini, müalicə prosesini qısaca izah edin..."
                     value={form.story}
                     onChange={set("story")}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-slate-400 resize-none"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent placeholder-slate-400 resize-none"
                   />
                 </div>
                 <div>
@@ -262,7 +251,7 @@ export default function ApplyPage() {
                       placeholder="5000"
                       value={form.goalAmount}
                       onChange={set("goalAmount")}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-slate-400 pr-10"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent placeholder-slate-400 pr-10"
                     />
                     <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">₼</span>
                   </div>
@@ -282,7 +271,7 @@ export default function ApplyPage() {
                 type="file"
                 accept="image/jpeg,image/png,image/webp,application/pdf"
                 onChange={(e) => setDocFile(e.target.files?.[0] ?? null)}
-                className="w-full text-sm text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-600 hover:file:bg-blue-100 cursor-pointer"
+                className="w-full text-sm text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-teal-50 file:text-teal-600 hover:file:bg-teal-100 cursor-pointer"
               />
               {docFile && (
                 <div className="mt-2 flex items-center gap-2 text-xs text-emerald-700 bg-emerald-50 px-3 py-2 rounded-lg">
@@ -322,7 +311,7 @@ export default function ApplyPage() {
                   submit();
                 }}
                 disabled={loading}
-                className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white font-semibold py-3.5 rounded-xl text-sm transition-colors"
+                className="flex-1 bg-teal-600 hover:bg-teal-700 disabled:opacity-60 text-white font-semibold py-3.5 rounded-xl text-sm transition-colors"
               >
                 {loading ? "Göndərilir..." : "Müraciəti göndər"}
               </button>
@@ -352,7 +341,7 @@ function Field({
         placeholder={placeholder}
         value={value}
         onChange={onChange}
-        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-slate-400"
+        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent placeholder-slate-400"
       />
     </div>
   );

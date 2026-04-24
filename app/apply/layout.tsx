@@ -1,10 +1,16 @@
+import Navbar from "@/components/Navbar";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Yardım müraciəti",
-  description: "Onkoloji xəstə üçün yardım müraciəti göndərin. Müraciətiniz komandamız tərəfindən yoxlanılacaq.",
+  description: "onkodəstək platformasına yardım müraciəti göndərin. Tibbi sənədlərinizi yükləyin, komandamız 1-3 iş günü ərzində sizinlə əlaqə saxlayacaq.",
 };
 
 export default function ApplyLayout({ children }: { children: React.ReactNode }) {
-  return <>{children}</>;
+  return (
+    <>
+      <Navbar />
+      {children}
+    </>
+  );
 }

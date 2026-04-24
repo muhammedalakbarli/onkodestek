@@ -95,17 +95,15 @@ export default async function HomePage() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center animate-fade-in-up-delay-3">
-              <a
-                href="https://t.me/OnkoDestek_bot"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 bg-white text-blue-700 font-bold px-8 py-3.5 rounded-full hover:bg-blue-50 active:scale-95 transition-all shadow-lg shadow-black/20 text-sm"
+              <Link
+                href="/apply"
+                className="inline-flex items-center justify-center gap-2 bg-white text-teal-700 font-bold px-8 py-3.5 rounded-full hover:bg-teal-50 active:scale-95 transition-all shadow-lg shadow-black/20 text-sm"
               >
-                <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 shrink-0">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8l-1.7 8c-.12.58-.45.72-.91.45l-2.52-1.86-1.21 1.17c-.13.13-.25.25-.51.25l.18-2.57 4.65-4.2c.2-.18-.04-.28-.31-.1l-5.74 3.62-2.47-.77c-.54-.17-.55-.54.11-.8l9.64-3.72c.45-.16.84.11.69.53z"/>
+                <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                 </svg>
-                Telegram ilə müraciət et
-              </a>
+                Yardım müraciəti
+              </Link>
               <Link
                 href="/patients"
                 className="inline-flex items-center justify-center gap-2 glass text-white font-semibold px-8 py-3.5 rounded-full hover:bg-white/15 active:scale-95 transition-all text-sm"
