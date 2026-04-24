@@ -1,6 +1,7 @@
 import { auth, signOut } from "@/auth";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
+import Footer from "@/components/Footer";
 import { transactions, patients } from "@/drizzle/schema";
 import { eq, desc } from "drizzle-orm";
 import Link from "next/link";
@@ -166,6 +167,7 @@ export default async function MePage() {
         </div>
 
       </div>
+      <Footer />
     </div>
   );
 }

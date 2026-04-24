@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import Link from "next/link";
 
 export const metadata: Metadata = {
@@ -126,12 +127,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <footer className="bg-slate-950 text-slate-500 py-6 text-center text-xs px-4">
-        © 2026 onkodəstək —{" "}
-        <Link href="/privacy" className="hover:text-white transition-colors">Məxfilik siyasəti</Link>
-        {" · "}
-        <Link href="/terms" className="hover:text-white transition-colors">İstifadə şərtləri</Link>
-      </footer>
+      <Footer />
     </>
   );
 }

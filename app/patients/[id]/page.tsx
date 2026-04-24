@@ -5,6 +5,7 @@ import PhotoLightbox from "@/components/PhotoLightbox";
 import ProgressBar from "@/components/ProgressBar";
 import DonationModal from "@/components/DonationModal";
 import ShareButtons from "@/components/ShareButtons";
+import Footer from "@/components/Footer";
 import { db } from "@/lib/db";
 import { patients, transactions } from "@/drizzle/schema";
 import { eq } from "drizzle-orm";
@@ -271,6 +272,7 @@ export default async function PatientPage({
           </div>
         </div>
       </main>
+      <Footer />
     </>
   );
 }

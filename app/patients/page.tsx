@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import PatientFilter from "@/components/PatientFilter";
+import Footer from "@/components/Footer";
 import { db } from "@/lib/db";
 import { patients } from "@/drizzle/schema";
 import type { Patient } from "@/drizzle/schema";
@@ -77,6 +78,7 @@ export default async function PatientsPage() {
           <PatientFilter patients={list} />
         )}
       </main>
+      <Footer />
     </>
   );
 }

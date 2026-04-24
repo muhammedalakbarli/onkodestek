@@ -4,6 +4,24 @@ import { patients, transactions } from "@/drizzle/schema";
 import { eq } from "drizzle-orm";
 import { isAdmin } from "@/lib/adminAuth";
 
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  if (!(await isAdmin(req))) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  const { id } = await params;
+  try {
+    await db.delete(transactions).where(eq(transactions.patientId, parseInt(id)));
+    await db.delete(patients).where(eq(patients.id, parseInt(id)));
+    return NextResponse.json({ ok: true });
+  } catch (err) {
+    console.error(err);
+    return NextResponse.json({ error: "Server xətası" }, { status: 500 });
+  }
+}
+
 export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }

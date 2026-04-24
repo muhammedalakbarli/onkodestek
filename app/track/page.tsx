@@ -3,6 +3,7 @@ import { patients, transactions } from "@/drizzle/schema";
 import { eq, desc } from "drizzle-orm";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import Footer from "@/components/Footer";
 
 export default async function TrackPage({
   searchParams,
@@ -239,6 +240,7 @@ export default async function TrackPage({
         </div>
 
       </div>
+      <Footer />
     </div>
   );
 }

@@ -5,6 +5,7 @@ import { patients, transactions } from "@/drizzle/schema";
 import { eq, sql } from "drizzle-orm";
 import { formatCurrency, formatDate, calcProgress } from "@/lib/utils";
 import PatientActions from "./PatientActions";
+import DeletePatientButton from "./DeletePatientButton";
 
 export const revalidate = 0;
 
@@ -173,6 +174,7 @@ export default async function AdminPatientDetailPage({
         {/* Sağ sütun: əməliyyatlar */}
         <div>
           <PatientActions patient={patient} />
+          <DeletePatientButton patientId={patient.id} />
         </div>
       </div>
     </div>
