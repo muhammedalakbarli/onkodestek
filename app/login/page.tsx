@@ -1,6 +1,7 @@
 import { auth, signIn } from "@/auth";
 import { redirect } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 
 export default async function LoginPage({
   searchParams,
@@ -165,7 +166,7 @@ export default async function LoginPage({
 
         <p className="mt-12 text-xs text-slate-400 text-center">
           Daxil olmaqla{" "}
-          <a href="#" className="text-teal-600 hover:underline">İstifadə Şərtlərini</a>{" "}
+          <Link href="/terms" className="text-teal-600 hover:underline">İstifadə Şərtlərini</Link>{" "}
           qəbul etmiş olursunuz.
         </p>
       </div>
