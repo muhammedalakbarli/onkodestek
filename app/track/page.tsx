@@ -265,7 +265,7 @@ function TrackForm() {
         </div>
         <h1 className="text-xl font-bold text-slate-900 mb-1">Müraciəti izlə</h1>
         <p className="text-sm text-slate-500 mb-6">
-          Telegram botdan aldığınız izləmə kodunu daxil edin
+          Müraciət etdikdən sonra aldığınız izləmə kodunu daxil edin
         </p>
         <form action="/track" method="GET">
           <input
@@ -284,7 +284,7 @@ function TrackForm() {
           </button>
         </form>
         <p className="text-xs text-slate-400 mt-4 text-center">
-          İzləmə kodunu Telegram botumuzdan müraciət edəndə alırsınız
+          İzləmə kodu müraciət formasını göndərdikdən sonra göstərilir
         </p>
       </div>
     </div>

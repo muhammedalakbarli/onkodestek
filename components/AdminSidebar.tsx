@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -76,11 +77,7 @@ export default function AdminSidebar() {
       {/* ── Mobil üst bar ─────────────────────────────────────────────── */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-slate-950 border-b border-slate-800 flex items-center justify-between px-4 h-14">
         <Link href="/" className="flex items-center gap-2">
-          <div className="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center">
-            <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 text-white" stroke="currentColor" strokeWidth="2.2">
-              <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
-            </svg>
-          </div>
+          <Image src="/logo.jpeg" alt="onkodəstək" width={28} height={28} className="rounded-lg object-contain" />
           <span className="text-white font-bold text-sm">onkodəstək</span>
         </Link>
         <button
@@ -116,11 +113,7 @@ export default function AdminSidebar() {
       <aside className="hidden lg:flex w-56 min-h-screen bg-slate-950 border-r border-slate-800 flex-col fixed top-0 left-0 z-40">
         <div className="px-5 py-5 border-b border-slate-800">
           <Link href="/" className="flex items-center gap-2.5">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shrink-0">
-              <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5 text-white" stroke="currentColor" strokeWidth="2.2">
-                <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
-              </svg>
-            </div>
+            <Image src="/logo.jpeg" alt="onkodəstək" width={32} height={32} className="rounded-lg object-contain shrink-0" />
             <div>
               <p className="text-white font-bold text-sm leading-none">onkodəstək</p>
               <p className="text-slate-500 text-[11px] mt-0.5">Admin panel</p>
