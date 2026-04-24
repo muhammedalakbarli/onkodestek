@@ -1,10 +1,11 @@
 import Link from "next/link";
+import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import PatientCard from "@/components/PatientCard";
 import StatCard from "@/components/StatCard";
 import { db } from "@/lib/db";
 import { patients, transactions } from "@/drizzle/schema";
-import { eq, sql, sum, count } from "drizzle-orm";
+import { eq, sql, sum } from "drizzle-orm";
 import { formatCurrency } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -61,7 +62,7 @@ export default async function HomePage() {
       <Navbar />
 
       {/* ── Hero ───────────────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-blue-700 via-blue-800 to-indigo-900 text-white">
+      <section className="relative overflow-hidden bg-gradient-to-br from-blue-800 via-teal-800 to-blue-900 text-white">
         {/* Fon naxışı */}
         <div className="absolute inset-0 hero-pattern opacity-40 pointer-events-none" />
 
@@ -82,7 +83,7 @@ export default async function HomePage() {
 
             <h1 className="text-5xl md:text-7xl font-extrabold mb-6 leading-[1.1] tracking-tight animate-fade-in-up-delay-1">
               Həyata{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-indigo-200">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-300 to-blue-200">
                 dəstək ol
               </span>
             </h1>
@@ -146,28 +147,28 @@ export default async function HomePage() {
           <StatCard
             title="Cəmi toplanıb"
             value={formatCurrency(totalCollected)}
-            icon="💰"
+            icon={<svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8"><path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
             accent="green"
           />
           <StatCard
             title="Aktiv xəstə"
             value={activeCount}
             subtitle="yığım davam edir"
-            icon="🏥"
+            icon={<svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8"><path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>}
             accent="blue"
           />
           <StatCard
             title="Tam dəstəkləndi"
             value={fundedCount}
             subtitle="uğurla tamamlandı"
-            icon="✅"
+            icon={<svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
             accent="purple"
           />
           <StatCard
             title="Ümumi ianə"
             value={donationCount}
             subtitle="ayrı-ayrı ianə"
-            icon="🤝"
+            icon={<svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8"><path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>}
             accent="orange"
           />
         </div>
@@ -178,12 +179,12 @@ export default async function HomePage() {
         <section className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
           <div className="flex items-end justify-between mb-7">
             <div>
-              <p className="text-xs font-semibold text-blue-600 uppercase tracking-widest mb-1">Müraciətlər</p>
+              <p className="text-xs font-semibold text-teal-600 uppercase tracking-widest mb-1">Müraciətlər</p>
               <h2 className="text-2xl font-bold text-slate-900">Aktiv yardım kampaniyaları</h2>
             </div>
             <Link
               href="/patients"
-              className="text-sm font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-1 transition-colors"
+              className="text-sm font-semibold text-teal-600 hover:text-teal-800 flex items-center gap-1 transition-colors"
             >
               Hamısı
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
@@ -203,7 +204,7 @@ export default async function HomePage() {
       <section className="bg-white border-t border-slate-100 py-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-14">
-            <p className="text-xs font-semibold text-blue-600 uppercase tracking-widest mb-2">Proses</p>
+            <p className="text-xs font-semibold text-teal-600 uppercase tracking-widest mb-2">Proses</p>
             <h2 className="text-3xl font-bold text-slate-900">Necə işləyir?</h2>
           </div>
 
@@ -265,23 +266,35 @@ export default async function HomePage() {
           <div className="grid md:grid-cols-3 gap-6">
             {[
               {
-                icon: "🔒",
+                icon: (
+                  <svg className="w-5 h-5 text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  </svg>
+                ),
                 title: "Sənəd Yoxlaması",
                 desc: "Hər xəstənin tibbi sənədləri komanda tərəfindən şəxsən yoxlanılır. Yoxlanılmamış müraciətlər ictimaiyyətə açılmır.",
               },
               {
-                icon: "💳",
+                icon: (
+                  <svg className="w-5 h-5 text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                  </svg>
+                ),
                 title: "Birbaşa Köçürmə",
                 desc: "Toplanmış vəsait xəstənin müalicəsi üçün birbaşa xəstəxanaya və ya əczaçılığa köçürülür.",
               },
               {
-                icon: "📄",
+                icon: (
+                  <svg className="w-5 h-5 text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z" />
+                  </svg>
+                ),
                 title: "Qəbz Şəffaflığı",
                 desc: "Xərclənən hər qəpik rəsmi qəbzlə platformada dərc edilir. Tarixcə heç vaxt silinmir.",
               },
             ].map((item) => (
               <div key={item.title} className="flex gap-4">
-                <div className="w-10 h-10 bg-blue-900/60 border border-blue-700/40 rounded-xl flex items-center justify-center text-xl shrink-0 mt-0.5">
+                <div className="w-10 h-10 bg-teal-900/40 border border-teal-700/30 rounded-xl flex items-center justify-center shrink-0 mt-0.5">
                   {item.icon}
                 </div>
                 <div>
@@ -300,11 +313,7 @@ export default async function HomePage() {
           <div className="flex flex-col md:flex-row justify-between gap-8">
             <div>
               <div className="flex items-center gap-2.5 mb-3">
-                <div className="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center">
-                  <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 text-white" stroke="currentColor" strokeWidth="2.2">
-                    <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
-                  </svg>
-                </div>
+                <Image src="/logo.jpeg" alt="onkodəstək" width={28} height={28} className="rounded-lg object-contain" />
                 <span className="font-bold text-white text-base">onkodəstək</span>
               </div>
               <p className="text-sm max-w-xs leading-relaxed">

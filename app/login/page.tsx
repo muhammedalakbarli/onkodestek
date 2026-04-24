@@ -1,5 +1,6 @@
 import { auth, signIn } from "@/auth";
 import { redirect } from "next/navigation";
+import Image from "next/image";
 
 export default async function LoginPage({
   searchParams,
@@ -33,11 +34,7 @@ export default async function LoginPage({
 
         {/* Logo */}
         <div className="relative flex items-center gap-3">
-          <div className="w-10 h-10 bg-white/20 backdrop-blur rounded-xl flex items-center justify-center">
-            <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 text-white" stroke="currentColor" strokeWidth="2.2">
-              <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
-            </svg>
-          </div>
+          <Image src="/logo.jpeg" alt="onkodəstək" width={44} height={44} className="rounded-xl object-contain" />
           <div>
             <p className="text-white font-bold text-lg leading-none">onkodəstək</p>
             <p className="text-blue-200 text-xs mt-0.5">Həyata dəstək ol</p>
@@ -80,11 +77,7 @@ export default async function LoginPage({
       <div className="flex-1 flex flex-col items-center justify-center px-6 py-12">
         {/* Mobil logo */}
         <div className="lg:hidden flex items-center gap-2.5 mb-10">
-          <div className="w-9 h-9 bg-blue-600 rounded-xl flex items-center justify-center">
-            <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5 text-white" stroke="currentColor" strokeWidth="2.2">
-              <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
-            </svg>
-          </div>
+          <Image src="/logo.jpeg" alt="onkodəstək" width={36} height={36} className="rounded-xl object-contain" />
           <span className="font-bold text-slate-900 text-lg">onkodəstək</span>
         </div>
 
