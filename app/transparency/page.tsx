@@ -70,7 +70,7 @@ export default async function TransparencyPage() {
       {/* Səhifə başlığı */}
       <div className="bg-white border-b border-slate-100">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-10">
-          <p className="text-xs font-semibold text-blue-600 uppercase tracking-widest mb-2">Maliyyə hesabatı</p>
+          <p className="text-xs font-semibold text-teal-600 uppercase tracking-widest mb-2">Maliyyə hesabatı</p>
           <h1 className="text-3xl font-bold text-slate-900 mb-1">Şəffaflıq</h1>
           <p className="text-slate-500 text-sm max-w-xl">
             Platforma vasitəsilə həyata keçirilən bütün maliyyə əməliyyatları aşağıda sıralanır.
