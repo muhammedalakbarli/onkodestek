@@ -83,48 +83,51 @@ export default async function TransparencyPage() {
 
         {/* Xülasə kartları */}
         <div className="grid sm:grid-cols-4 gap-4">
-          {[
-            {
-              label: "Cəmi daxil olan ianə",
-              value: formatCurrency(totalDonations),
-              color: "text-emerald-600",
-              bg: "bg-emerald-50 border-emerald-100",
-              icon: "↑",
-              iconBg: "bg-emerald-100 text-emerald-700",
-            },
-            {
-              label: "Cəmi xərclənmiş vəsait",
-              value: formatCurrency(totalExpenses),
-              color: "text-red-500",
-              bg: "bg-red-50 border-red-100",
-              icon: "↓",
-              iconBg: "bg-red-100 text-red-600",
-            },
-            {
-              label: "Cari qalıq",
-              value: formatCurrency(balance),
-              color: "text-blue-700",
-              bg: "bg-blue-50 border-blue-100",
-              icon: "=",
-              iconBg: "bg-blue-100 text-blue-700",
-            },
-            {
-              label: "Xərc effektivliyi",
-              value: `${efficiencyPct}%`,
-              color: "text-violet-700",
-              bg: "bg-violet-50 border-violet-100",
-              icon: "✓",
-              iconBg: "bg-violet-100 text-violet-700",
-            },
-          ].map((s) => (
-            <div key={s.label} className={`${s.bg} border rounded-2xl p-5`}>
-              <div className={`w-8 h-8 ${s.iconBg} rounded-lg flex items-center justify-center font-bold text-sm mb-3`}>
-                {s.icon}
-              </div>
-              <p className={`text-2xl font-extrabold ${s.color}`}>{s.value}</p>
-              <p className="text-xs text-slate-500 mt-1 leading-tight">{s.label}</p>
+
+          {/* İanə */}
+          <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+            <div className="w-9 h-9 bg-emerald-100 rounded-xl flex items-center justify-center mb-4">
+              <svg className="w-5 h-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+              </svg>
             </div>
-          ))}
+            <p className="text-2xl font-extrabold text-slate-900 tabular-nums">{formatCurrency(totalDonations)}</p>
+            <p className="text-xs text-slate-500 mt-1.5 font-medium">Cəmi daxil olan ianə</p>
+          </div>
+
+          {/* Xərc */}
+          <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+            <div className="w-9 h-9 bg-orange-100 rounded-xl flex items-center justify-center mb-4">
+              <svg className="w-5 h-5 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M20 12H4" />
+              </svg>
+            </div>
+            <p className="text-2xl font-extrabold text-slate-900 tabular-nums">{formatCurrency(totalExpenses)}</p>
+            <p className="text-xs text-slate-500 mt-1.5 font-medium">Cəmi xərclənmiş vəsait</p>
+          </div>
+
+          {/* Qalıq */}
+          <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+            <div className="w-9 h-9 bg-teal-100 rounded-xl flex items-center justify-center mb-4">
+              <svg className="w-5 h-5 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+              </svg>
+            </div>
+            <p className="text-2xl font-extrabold text-slate-900 tabular-nums">{formatCurrency(balance)}</p>
+            <p className="text-xs text-slate-500 mt-1.5 font-medium">Cari qalıq</p>
+          </div>
+
+          {/* Effektivlik */}
+          <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+            <div className="w-9 h-9 bg-slate-100 rounded-xl flex items-center justify-center mb-4">
+              <svg className="w-5 h-5 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+            </div>
+            <p className="text-2xl font-extrabold text-slate-900 tabular-nums">{efficiencyPct}%</p>
+            <p className="text-xs text-slate-500 mt-1.5 font-medium">Xərc effektivliyi</p>
+          </div>
+
         </div>
 
         {/* Əməliyyatlar cədvəli */}
