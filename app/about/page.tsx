@@ -42,7 +42,7 @@ const VALUES = [
 ];
 
 const STEPS = [
-  { num: "01", title: "Müraciət",    desc: "Xəstə ailəsi sayt forması və ya Telegram botu vasitəsilə müraciət edir.", color: "from-blue-500 to-teal-500" },
+  { num: "01", title: "Müraciət",    desc: "Xəstə ailəsi sayt forması vasitəsilə müraciət edir, tibbi sənədlər yüklənir.", color: "from-blue-500 to-teal-500" },
   { num: "02", title: "Yoxlama",     desc: "Komandamız tibbi sənədləri, xəstəxana arayışını və ehtiyacı yoxlayır.", color: "from-teal-500 to-emerald-500" },
   { num: "03", title: "Yayım",       desc: "Yoxlanılmış xəstənin kampaniyası saytda ictimaiyyətə açılır.", color: "from-emerald-500 to-teal-500" },
   { num: "04", title: "Yığım",       desc: "İanəçilər kampaniyaya dəstək verir. Hər ianə qeydə alınır.", color: "from-teal-500 to-blue-500" },

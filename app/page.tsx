@@ -214,7 +214,7 @@ export default async function HomePage() {
               {
                 num: "01",
                 title: "Müraciət",
-                desc: "Xəstə və ya ailə üzvü Telegram botu vasitəsilə müraciət edir. Tibbi sənədlər yoxlanılır.",
+                desc: "Xəstə və ya ailə üzvü sayt forması vasitəsilə müraciət edir. Tibbi sənədlər yüklənir.",
                 icon: (
                   <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
@@ -254,6 +254,115 @@ export default async function HomePage() {
                 <p className="text-slate-500 text-sm leading-relaxed">{item.desc}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Dəstəkləmə istiqamətləri ───────────────────────────────────────── */}
+      <section className="bg-slate-50 border-t border-slate-100 py-20">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-12">
+            <p className="text-xs font-semibold text-teal-600 uppercase tracking-widest mb-2">Fəaliyyət sahələri</p>
+            <h2 className="text-3xl font-bold text-slate-900">Nəyi ödəyirik?</h2>
+            <p className="text-slate-500 text-sm mt-3 max-w-xl mx-auto">
+              Toplanmış vəsait yalnız xəstənin birbaşa tibbi ehtiyacları üçün istifadə edilir.
+            </p>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[
+              {
+                icon: <path strokeLinecap="round" strokeLinejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />,
+                title: "Dərman xərcləri",
+                desc: "Kimyaterapiya, hormon terapiyası, ağrıkəsici və digər müalicə dərmanları.",
+                color: "bg-teal-100 text-teal-700",
+              },
+              {
+                icon: <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />,
+                title: "Xəstəxana xərcləri",
+                desc: "Cərrahiyyə əməliyyatı, hospitalizasiya, laboratoriya analizləri və müayinələr.",
+                color: "bg-blue-100 text-blue-700",
+              },
+              {
+                icon: <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />,
+                title: "Konsultasiya",
+                desc: "Onkoloq, cərrah və digər ixtisaslı həkim müayinələri üçün ödənişlər.",
+                color: "bg-violet-100 text-violet-700",
+              },
+              {
+                icon: <path strokeLinecap="round" strokeLinejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />,
+                title: "Nəqliyyat",
+                desc: "Müalicə mərkəzinə mütəmadi gedib-gəlmə xərcləri, xüsusilə şəhərdənkənar xəstələr üçün.",
+                color: "bg-amber-100 text-amber-700",
+              },
+              {
+                icon: <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />,
+                title: "Psixoloji dəstək",
+                desc: "Xəstə və ailə üçün psixoloq seansları. Telegram botu vasitəsilə pulsuz ilkin dəstək.",
+                color: "bg-rose-100 text-rose-700",
+              },
+              {
+                icon: <path strokeLinecap="round" strokeLinejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />,
+                title: "Tibbi avadanlıq",
+                desc: "Ev şəraitində müalicə üçün lazım olan tibbi cihaz və ləvazimatlar.",
+                color: "bg-emerald-100 text-emerald-700",
+              },
+            ].map((item) => (
+              <div key={item.title} className="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm hover:shadow-md hover:border-teal-100 transition-all">
+                <div className={`w-10 h-10 ${item.color} rounded-xl flex items-center justify-center mb-4`}>
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8">
+                    {item.icon}
+                  </svg>
+                </div>
+                <h3 className="font-bold text-slate-900 mb-1.5 text-sm">{item.title}</h3>
+                <p className="text-xs text-slate-500 leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Könüllü ol ──────────────────────────────────────────────────────── */}
+      <section className="bg-white border-t border-slate-100 py-20">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="bg-gradient-to-br from-teal-600 to-blue-700 rounded-3xl p-8 md:p-12 text-white relative overflow-hidden">
+            <div className="absolute -top-16 -right-16 w-64 h-64 bg-white/5 rounded-full blur-2xl pointer-events-none" />
+            <div className="absolute -bottom-12 -left-12 w-48 h-48 bg-teal-400/10 rounded-full blur-2xl pointer-events-none" />
+            <div className="relative grid md:grid-cols-2 gap-8 items-center">
+              <div>
+                <p className="text-teal-200 text-xs font-semibold uppercase tracking-widest mb-3">Könüllülük</p>
+                <h2 className="text-3xl font-extrabold mb-4 leading-tight">
+                  Pul olmadan da<br />dəstək ola bilərsiniz
+                </h2>
+                <p className="text-blue-100 text-sm leading-relaxed mb-6">
+                  Sosial media paylaşımı, sənəd yoxlamasında kömək, hüquqi məsləhət,
+                  tibbi ekspertiza — hər formada könüllü dəstəyə ehtiyacımız var.
+                </p>
+                <a
+                  href="https://t.me/onkodestek_admin"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 bg-white text-teal-700 font-bold px-6 py-3 rounded-full hover:bg-teal-50 transition-colors text-sm shadow-lg"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
+                  </svg>
+                  Bizimlə əlaqə saxla
+                </a>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  { label: "Paylaşım", desc: "Kampaniyaları sosial mediada yay" },
+                  { label: "Ekspertiza", desc: "Tibbi/hüquqi məsləhət ver" },
+                  { label: "Tərcümə", desc: "Sənədlərin tərcüməsində kömək et" },
+                  { label: "Texniki", desc: "Platformanın inkişafına töhfə ver" },
+                ].map((v) => (
+                  <div key={v.label} className="bg-white/10 border border-white/20 rounded-2xl p-4 backdrop-blur-sm">
+                    <p className="font-bold text-white text-sm mb-1">{v.label}</p>
+                    <p className="text-blue-200 text-xs leading-relaxed">{v.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </section>
