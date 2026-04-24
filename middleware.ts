@@ -34,6 +34,14 @@ export async function middleware(req: NextRequest) {
 
   // ── Ana səhifə: sessiya olmadan login-ə yönləndir ────────────────────────
   if (pathname === "/") {
+    // Admin JWT cookie ilə giriş icazəsi
+    const adminToken = req.cookies.get(DASHBOARD_COOKIE)?.value;
+    if (adminToken) {
+      try {
+        await jwtVerify(adminToken, DASHBOARD_SECRET);
+        return NextResponse.next();
+      } catch {}
+    }
     const session = await auth();
     if (!session?.user) {
       return NextResponse.redirect(new URL("/login", req.url));

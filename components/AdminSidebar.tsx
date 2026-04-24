@@ -47,18 +47,17 @@ export default function AdminSidebar() {
       </nav>
 
       <div className="px-3 py-4 border-t border-slate-800 space-y-1">
-        <Link
-          href="/patients"
+        <a
+          href="/"
           target="_blank"
           rel="noopener noreferrer"
-          onClick={() => setOpen(false)}
           className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800 transition-all"
         >
           <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8">
             <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
           </svg>
           Sayta bax
-        </Link>
+        </a>
         <button
           onClick={logout}
           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-red-400 hover:bg-red-950/30 transition-all"
@@ -76,7 +75,7 @@ export default function AdminSidebar() {
     <>
       {/* ── Mobil üst bar ─────────────────────────────────────────────── */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-slate-950 border-b border-slate-800 flex items-center justify-between px-4 h-14">
-        <Link href="/patients" className="flex items-center gap-2">
+        <Link href="/" className="flex items-center gap-2">
           <div className="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center">
             <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 text-white" stroke="currentColor" strokeWidth="2.2">
               <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
@@ -116,7 +115,7 @@ export default function AdminSidebar() {
       {/* ── Desktop sidebar ───────────────────────────────────────────── */}
       <aside className="hidden lg:flex w-56 min-h-screen bg-slate-950 border-r border-slate-800 flex-col fixed top-0 left-0 z-40">
         <div className="px-5 py-5 border-b border-slate-800">
-          <Link href="/patients" className="flex items-center gap-2.5">
+          <Link href="/" className="flex items-center gap-2.5">
             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shrink-0">
               <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5 text-white" stroke="currentColor" strokeWidth="2.2">
                 <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
