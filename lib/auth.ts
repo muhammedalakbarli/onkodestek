@@ -6,7 +6,7 @@ const SECRET = new TextEncoder().encode(
 );
 
 const COOKIE_NAME = "onko_admin_token";
-const TOKEN_TTL   = 60 * 60 * 8; // 8 saat
+const TOKEN_TTL   = 60 * 60 * 24 * 30; // 30 gün
 
 export async function signAdminToken(): Promise<string> {
   return new SignJWT({ role: "admin" })

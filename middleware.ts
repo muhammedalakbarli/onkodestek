@@ -9,8 +9,10 @@ export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   // ── Həmişə açıq olan yollar ───────────────────────────────────────────────
-  if (pathname.startsWith("/api/auth"))    return NextResponse.next();
-  if (pathname.startsWith("/api/telegram")) return NextResponse.next();
+  if (pathname.startsWith("/api/auth"))         return NextResponse.next();
+  if (pathname.startsWith("/api/telegram"))      return NextResponse.next();
+  if (pathname.startsWith("/api/admin/magic"))   return NextResponse.next();
+  if (pathname.startsWith("/api/admin/send-magic")) return NextResponse.next();
   if (pathname === "/login")               return NextResponse.next();
   if (pathname === "/dashboard/login")     return NextResponse.next();
 
