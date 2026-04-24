@@ -38,13 +38,17 @@ export default function VolunteerForm() {
       if (res.ok) {
         setStatus("success");
       } else {
-        const data = await res.json();
+        let msg = `Server xətası (${res.status})`;
+        try {
+          const data = await res.json();
+          msg = data.error ?? msg;
+        } catch { /* ignore json parse error */ }
         setStatus("error");
-        setErrorMsg(data.error ?? "Xəta baş verdi.");
+        setErrorMsg(msg);
       }
-    } catch {
+    } catch (err) {
       setStatus("error");
-      setErrorMsg("Şəbəkə xətası. Yenidən cəhd edin.");
+      setErrorMsg(err instanceof Error ? err.message : "Şəbəkə xətası. Yenidən cəhd edin.");
     }
   }
 
