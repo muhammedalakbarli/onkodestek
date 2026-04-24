@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { patients, transactions } from "@/drizzle/schema";
 import { eq } from "drizzle-orm";
 import { isAdmin } from "@/lib/adminAuth";
+import { PatientPatchSchema } from "@/lib/schemas";
 
 export async function DELETE(
   req: NextRequest,
@@ -12,9 +13,13 @@ export async function DELETE(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   const { id } = await params;
+  const patientId = parseInt(id);
+  if (isNaN(patientId)) {
+    return NextResponse.json({ error: "Yanlış id" }, { status: 400 });
+  }
   try {
-    await db.delete(transactions).where(eq(transactions.patientId, parseInt(id)));
-    await db.delete(patients).where(eq(patients.id, parseInt(id)));
+    await db.delete(transactions).where(eq(transactions.patientId, patientId));
+    await db.delete(patients).where(eq(patients.id, patientId));
     return NextResponse.json({ ok: true });
   } catch (err) {
     console.error(err);
@@ -27,11 +32,15 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
+  const patientId = parseInt(id);
+  if (isNaN(patientId)) {
+    return NextResponse.json({ error: "Yanlış id" }, { status: 400 });
+  }
   try {
     const [patient] = await db
       .select()
       .from(patients)
-      .where(eq(patients.id, parseInt(id)));
+      .where(eq(patients.id, patientId));
 
     if (!patient) {
       return NextResponse.json({ error: "Tapılmadı" }, { status: 404 });
@@ -50,7 +59,7 @@ export async function GET(
   }
 }
 
-// PATCH /api/patients/[id] — admin: statusu yenilə, ictimaiyyətə aç
+// PATCH /api/patients/[id] — admin: məlumatları yenilə
 export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -60,22 +69,31 @@ export async function PATCH(
   }
 
   const { id } = await params;
-  try {
-    const body = await req.json();
+  const patientId = parseInt(id);
+  if (isNaN(patientId)) {
+    return NextResponse.json({ error: "Yanlış id" }, { status: 400 });
+  }
 
-    // Status "active" və ya "funded" olduqda isPublic avtomatik true olsun
-    // Status "pending" və ya "closed" olduqda isPublic false olsun
+  try {
+    const parsed = PatientPatchSchema.safeParse(await req.json());
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: "Məlumatlar düzgün deyil", details: parsed.error.flatten().fieldErrors },
+        { status: 400 }
+      );
+    }
+
     const autoPublic =
-      body.status === "active" || body.status === "funded"
+      parsed.data.status === "active" || parsed.data.status === "funded"
         ? { isPublic: true }
-        : body.status === "pending" || body.status === "closed"
+        : parsed.data.status === "pending" || parsed.data.status === "closed"
         ? { isPublic: false }
         : {};
 
     const [updated] = await db
       .update(patients)
-      .set({ ...body, ...autoPublic, updatedAt: new Date() })
-      .where(eq(patients.id, parseInt(id)))
+      .set({ ...parsed.data, ...autoPublic, updatedAt: new Date() })
+      .where(eq(patients.id, patientId))
       .returning();
 
     return NextResponse.json(updated);

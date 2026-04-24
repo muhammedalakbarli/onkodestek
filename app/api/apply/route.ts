@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { patients } from "@/drizzle/schema";
 import { bot } from "@/lib/telegram";
 import { rateLimit } from "@/lib/rateLimit";
+import { ApplySchema } from "@/lib/schemas";
 
 function generateTrackId(): string {
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -25,25 +26,29 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const body = await req.json();
+    const raw = await req.json();
 
     // Honeypot: botlar bu sahəni doldurur, insanlar doldurmur
-    if (body._trap) {
-      return NextResponse.json({ trackId: "OKD-FAKE00" }); // bot saydırma
+    if (raw._trap) {
+      return NextResponse.json({ trackId: "OKD-FAKE00" });
+    }
+
+    const parsed = ApplySchema.safeParse(raw);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: "Məlumatlar düzgün deyil", details: parsed.error.flatten().fieldErrors },
+        { status: 400 }
+      );
     }
 
     const {
       fullName, age, diagnosis, hospitalName,
       contactPhone, story, goalAmount,
       applicantName, relation, documentUrl,
-    } = body;
-
-    if (!fullName || !diagnosis || !goalAmount || !contactPhone) {
-      return NextResponse.json({ error: "Məcburi sahələr boşdur" }, { status: 400 });
-    }
+    } = parsed.data;
 
     const amount = parseFloat(goalAmount);
-    if (isNaN(amount) || amount <= 0) {
+    if (amount <= 0 || amount > 1_000_000) {
       return NextResponse.json({ error: "Məbləğ düzgün deyil" }, { status: 400 });
     }
 

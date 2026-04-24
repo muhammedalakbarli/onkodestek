@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import PhotoLightbox from "@/components/PhotoLightbox";
 import ProgressBar from "@/components/ProgressBar";
@@ -13,6 +14,47 @@ import { eq } from "drizzle-orm";
 import { formatCurrency, formatDate, calcProgress } from "@/lib/utils";
 
 export const revalidate = 60;
+
+const BASE = process.env.NEXT_PUBLIC_APP_URL ?? "https://onkodestek.vercel.app";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  try {
+    const [patient] = await db
+      .select()
+      .from(patients)
+      .where(eq(patients.id, parseInt(id)));
+
+    if (!patient) return {};
+
+    const pct = calcProgress(patient.collectedAmount, patient.goalAmount);
+    const description =
+      `${patient.diagnosis} — ${formatCurrency(patient.collectedAmount)} / ${formatCurrency(patient.goalAmount)} toplanıb (${pct}%). ` +
+      `onkodəstək platforması vasitəsilə dəstək ol.`;
+
+    return {
+      title: `${patient.fullName} üçün dəstək`,
+      description,
+      openGraph: {
+        title: `${patient.fullName} üçün dəstək — onkodəstək`,
+        description,
+        url: `${BASE}/patients/${id}`,
+        ...(patient.photoUrl ? { images: [{ url: patient.photoUrl, width: 800, height: 800 }] } : {}),
+      },
+      twitter: {
+        card: patient.photoUrl ? "summary_large_image" : "summary",
+        title: `${patient.fullName} üçün dəstək — onkodəstək`,
+        description,
+      },
+    };
+  } catch {
+    return {};
+  }
+}
 
 const STATUS_CONFIG: Record<string, { label: string; badge: string }> = {
   pending:  { label: "Yoxlanılır",  badge: "bg-amber-50 text-amber-700 border-amber-200" },

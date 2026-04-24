@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { transactions, patients } from "@/drizzle/schema";
 import { eq, sql } from "drizzle-orm";
 import { isAdmin } from "@/lib/adminAuth";
+import { TransactionCreateSchema } from "@/lib/schemas";
 
 // GET /api/transactions — bütün əməliyyatları gətir (ictimai)
 export async function GET() {
@@ -26,10 +27,16 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const body = await req.json();
-    const [tx] = await db.insert(transactions).values(body).returning();
+    const parsed = TransactionCreateSchema.safeParse(await req.json());
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: "Məlumatlar düzgün deyil", details: parsed.error.flatten().fieldErrors },
+        { status: 400 }
+      );
+    }
 
-    // xəstənin collectedAmount-unu yenilə (yalnız ianə üçün)
+    const [tx] = await db.insert(transactions).values(parsed.data).returning();
+
     if (tx.type === "donation") {
       await db
         .update(patients)
