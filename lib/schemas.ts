@@ -61,3 +61,19 @@ export const TransactionCreateSchema = z.object({
   isAnonymous:     z.boolean().optional(),
   receiptUrl:      z.string().url().nullable().optional().or(z.literal("")),
 }).strict();
+
+export const VolunteerSchema = z.object({
+  fullName: z.string().min(2).max(120),
+  email:    z.string().email().max(255),
+  phone:    z.string().min(6).max(30).optional().or(z.literal("")),
+  area:     z.string().min(2).max(100),
+  message:  z.string().max(1000).optional().or(z.literal("")),
+  _trap:    z.string().optional(),
+});
+
+export const PlatformDonationSchema = z.object({
+  donorName:   z.string().max(120).nullable().optional(),
+  amount:      z.string().regex(/^\d+(\.\d{1,2})?$/),
+  isAnonymous: z.boolean().optional(),
+  note:        z.string().max(500).nullable().optional(),
+}).strict();

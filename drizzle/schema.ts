@@ -116,10 +116,36 @@ export const transactions = pgTable("transactions", {
   createdAt:       timestamp("created_at").notNull().defaultNow(),
 });
 
+// ── Volunteer Requests ────────────────────────────────────────────────────────
+
+export const volunteerRequests = pgTable("volunteer_requests", {
+  id:         serial("id").primaryKey(),
+  fullName:   varchar("full_name", { length: 255 }).notNull(),
+  email:      varchar("email", { length: 255 }).notNull(),
+  phone:      varchar("phone", { length: 50 }),
+  area:       varchar("area", { length: 100 }).notNull(),
+  message:    text("message"),
+  isReviewed: boolean("is_reviewed").notNull().default(false),
+  createdAt:  timestamp("created_at").notNull().defaultNow(),
+});
+
+// ── Platform Donations ────────────────────────────────────────────────────────
+
+export const platformDonations = pgTable("platform_donations", {
+  id:          serial("id").primaryKey(),
+  donorName:   varchar("donor_name", { length: 255 }),
+  amount:      numeric("amount", { precision: 12, scale: 2 }).notNull(),
+  isAnonymous: boolean("is_anonymous").notNull().default(false),
+  note:        text("note"),
+  createdAt:   timestamp("created_at").notNull().defaultNow(),
+});
+
 // ── Types ─────────────────────────────────────────────────────────────────────
 
-export type Patient     = typeof patients.$inferSelect;
-export type NewPatient  = typeof patients.$inferInsert;
-export type Transaction = typeof transactions.$inferSelect;
-export type NewTransaction = typeof transactions.$inferInsert;
-export type User        = typeof users.$inferSelect;
+export type Patient            = typeof patients.$inferSelect;
+export type NewPatient         = typeof patients.$inferInsert;
+export type Transaction        = typeof transactions.$inferSelect;
+export type NewTransaction     = typeof transactions.$inferInsert;
+export type User               = typeof users.$inferSelect;
+export type VolunteerRequest   = typeof volunteerRequests.$inferSelect;
+export type PlatformDonation   = typeof platformDonations.$inferSelect;

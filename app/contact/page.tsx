@@ -50,7 +50,7 @@ const FAQ = [
   },
   {
     q: "Könüllü olmaq üçün nə etməliyəm?",
-    a: "Admin Telegram hesabına yazın. Hansı sahədə kömək edə biləcəyinizi (tibbi, hüquqi, texniki, media) bildirin.",
+    a: "onkodestek.az/volunteer səhifəsindəki formu doldurun. Hansı sahədə kömək edə biləcəyinizi seçin — komandamız sizinlə əlaqə saxlayacaq.",
   },
   {
     q: "İanə etmək üçün qeydiyyat lazımdırmı?",
@@ -150,19 +150,17 @@ export default function ContactPage() {
           <div className="bg-gradient-to-br from-teal-600 to-blue-700 rounded-2xl p-8 text-white text-center">
             <h2 className="text-xl font-bold mb-2">Könüllü olmaq istəyirsiniz?</h2>
             <p className="text-blue-100 text-sm mb-5 max-w-md mx-auto">
-              Tibbi, hüquqi, texniki və ya media sahəsində kömək edə bilərsiniz.
-              Admin ilə Telegram-da əlaqə saxlayın.
+              Tibbi, hüquqi, texniki, media sahəsində kömək edə bilərsiniz.
+              Formu doldurun, sizinlə əlaqə saxlayaq.
             </p>
             <a
-              href="https://t.me/onkodestek_admin"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="/volunteer"
               className="inline-flex items-center gap-2 bg-white text-teal-700 font-bold px-6 py-3 rounded-full hover:bg-teal-50 transition-colors text-sm shadow-lg"
             >
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8l-1.7 8c-.12.58-.45.72-.91.45l-2.52-1.86-1.21 1.17c-.13.13-.25.25-.51.25l.18-2.57 4.65-4.2c.2-.18-.04-.28-.31-.1l-5.74 3.62-2.47-.77c-.54-.17-.55-.54.11-.8l9.64-3.72c.45-.16.84.11.69.53z"/>
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
               </svg>
-              Könüllü ol
+              Könüllü formu doldur
             </a>
           </div>
 

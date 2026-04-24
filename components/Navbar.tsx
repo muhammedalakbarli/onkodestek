@@ -32,6 +32,7 @@ export default async function Navbar() {
           {[
             { href: "/patients",     label: "Xəstələr" },
             { href: "/transparency", label: "Şəffaflıq" },
+            { href: "/donate",       label: "İanə et" },
             { href: "/about",        label: "Haqqımızda" },
             { href: "/contact",      label: "Əlaqə" },
           ].map((item) => (
