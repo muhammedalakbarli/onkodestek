@@ -5,7 +5,10 @@ import { db } from "@/lib/db";
 import { users, accounts, sessions, verificationTokens } from "@/drizzle/schema";
 import { eq } from "drizzle-orm";
 
-const ADMIN_EMAILS = (process.env.ADMIN_EMAILS ?? "").split(",").map((e) => e.trim().toLowerCase());
+const ADMIN_EMAILS = (process.env.ADMIN_EMAILS ?? "")
+  .split(",")
+  .map((e) => e.trim().toLowerCase())
+  .filter(Boolean);
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   trustHost: true,
@@ -21,43 +24,45 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
   ],
+  // JWT strategy: Edge middleware-də DB sorğusu lazım deyil
+  session: {
+    strategy: "jwt",
+    maxAge:   60 * 60 * 24 * 30, // 30 gün
+  },
   callbacks: {
-    async session({ session, user }) {
-      // Rol məlumatını sessiyaya əlavə et
-      const [dbUser] = await db.select().from(users).where(eq(users.id, user.id));
-      if (dbUser) {
-        session.user.id   = dbUser.id;
-        session.user.role = dbUser.role;
+    async jwt({ token, user }) {
+      if (user) {
+        // İlk giriş: user məlumatları token-ə yazılır
+        token.id    = user.id;
+        token.email = user.email;
+        const isAdmin = ADMIN_EMAILS.includes((user.email ?? "").toLowerCase());
+        token.role  = isAdmin ? "admin" : ((user as { role?: string }).role ?? "donor");
+
+        // Admin rolunu DB-də yenilə (fire-and-forget)
+        if (isAdmin) {
+          db.update(users)
+            .set({ role: "admin" })
+            .where(eq(users.email, user.email!))
+            .catch(() => {});
+        }
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (token) {
+        session.user.id    = (token.id as string) ?? token.sub ?? "";
+        session.user.role  = (token.role as "admin" | "donor") ?? "donor";
+        session.user.email = token.email ?? session.user.email;
       }
       return session;
-    },
-    async signIn({ user }) {
-      // Admin emailləri avtomatik admin rolu alır
-      const email = user.email?.toLowerCase() ?? "";
-      if (ADMIN_EMAILS.includes(email)) {
-        // Rolunu admin et (ilk girişdə)
-        setTimeout(async () => {
-          try {
-            const [existing] = await db.select().from(users).where(eq(users.email, email));
-            if (existing && existing.role !== "admin") {
-              await db.update(users).set({ role: "admin" }).where(eq(users.email, email));
-            }
-          } catch { /* ignore */ }
-        }, 500);
-      }
-      return true;
     },
   },
   pages: {
     signIn: "/login",
   },
-  session: {
-    strategy: "database",
-    maxAge:   60 * 60 * 24 * 30, // 30 gün
-  },
 });
 
-// TypeScript: session-a role əlavə et
+// TypeScript: session-a id və role əlavə et
 declare module "next-auth" {
   interface Session {
     user: {
@@ -69,3 +74,4 @@ declare module "next-auth" {
     };
   }
 }
+
