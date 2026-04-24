@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import PhotoLightbox from "@/components/PhotoLightbox";
 import ProgressBar from "@/components/ProgressBar";
 import DonationModal from "@/components/DonationModal";
+import ShareButtons from "@/components/ShareButtons";
 import { db } from "@/lib/db";
 import { patients, transactions } from "@/drizzle/schema";
 import { eq } from "drizzle-orm";
@@ -161,6 +162,13 @@ export default async function PatientPage({
                 />
               </div>
             )}
+
+            <div className="mt-4 pt-4 border-t border-slate-100">
+              <ShareButtons
+                url={`${process.env.NEXT_PUBLIC_APP_URL ?? "https://onkodestek.vercel.app"}/patients/${patient.id}`}
+                title={`${patient.fullName} üçün dəstək ol — onkodəstək`}
+              />
+            </div>
           </div>
         </div>
 

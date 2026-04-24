@@ -20,7 +20,7 @@ const EXPENSE_CATEGORIES = [
   { value: "other",        label: "Digər" },
 ];
 
-type Tab = "status" | "expense" | "donation";
+type Tab = "status" | "edit" | "expense" | "donation";
 
 async function uploadFile(file: File, folder: string): Promise<string> {
   const fd = new FormData();
@@ -53,6 +53,16 @@ export default function PatientActions({ patient }: { patient: Patient }) {
   const photoRef = useRef<HTMLInputElement>(null);
   const docRef   = useRef<HTMLInputElement>(null);
 
+  // Redaktə formu
+  const [editForm, setEditForm] = useState({
+    fullName:     patient.fullName,
+    age:          patient.age?.toString() ?? "",
+    diagnosis:    patient.diagnosis,
+    hospitalName: patient.hospitalName ?? "",
+    story:        patient.story ?? "",
+    goalAmount:   patient.goalAmount?.toString() ?? "",
+  });
+
   // Xərc formu
   const [expAmount,      setExpAmount]      = useState("");
   const [expCategory,    setExpCategory]    = useState("medication");
@@ -68,6 +78,33 @@ export default function PatientActions({ patient }: { patient: Patient }) {
   function flash(type: "ok" | "err", text: string) {
     setMsg({ type, text });
     setTimeout(() => setMsg(null), 4000);
+  }
+
+  async function saveEdit(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    const res = await fetch(`/api/patients/${patient.id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        "x-admin-secret": getAdminSecret(),
+      },
+      body: JSON.stringify({
+        fullName:     editForm.fullName,
+        age:          editForm.age ? parseInt(editForm.age) : null,
+        diagnosis:    editForm.diagnosis,
+        hospitalName: editForm.hospitalName || null,
+        story:        editForm.story || null,
+        goalAmount:   editForm.goalAmount,
+      }),
+    });
+    setLoading(false);
+    if (res.ok) {
+      flash("ok", "Məlumatlar yeniləndi");
+      router.refresh();
+    } else {
+      flash("err", "Xəta baş verdi");
+    }
   }
 
   async function saveStatus() {
@@ -183,6 +220,7 @@ export default function PatientActions({ patient }: { patient: Patient }) {
       <div className="flex border-b border-slate-100">
         {([
           { key: "status",   label: "Status" },
+          { key: "edit",     label: "Redaktə" },
           { key: "expense",  label: "Xərc" },
           { key: "donation", label: "İanə" },
         ] as { key: Tab; label: string }[]).map((t) => (
@@ -294,6 +332,41 @@ export default function PatientActions({ patient }: { patient: Patient }) {
               {loading ? "Saxlanılır..." : "Yadda saxla"}
             </button>
           </div>
+        )}
+
+        {/* ── Redaktə tab ────────────────────────────────── */}
+        {tab === "edit" && (
+          <form onSubmit={saveEdit} className="space-y-3">
+            {(["fullName", "age", "diagnosis", "hospitalName", "goalAmount"] as const).map((field) => (
+              <div key={field}>
+                <label className="block text-xs font-semibold text-slate-600 mb-1.5">
+                  {{ fullName: "Ad Soyad", age: "Yaş", diagnosis: "Diaqnoz", hospitalName: "Xəstəxana", goalAmount: "Hədəf məbləğ (AZN)" }[field]}
+                </label>
+                <input
+                  type={field === "age" || field === "goalAmount" ? "number" : "text"}
+                  value={editForm[field]}
+                  onChange={(e) => setEditForm((f) => ({ ...f, [field]: e.target.value }))}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            ))}
+            <div>
+              <label className="block text-xs font-semibold text-slate-600 mb-1.5">Hekayə</label>
+              <textarea
+                rows={4}
+                value={editForm.story}
+                onChange={(e) => setEditForm((f) => ({ ...f, story: e.target.value }))}
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 text-white font-semibold py-2.5 rounded-xl text-sm transition-colors"
+            >
+              {loading ? "Saxlanılır..." : "Məlumatları yenilə"}
+            </button>
+          </form>
         )}
 
         {/* ── Xərc tab ───────────────────────────────────── */}

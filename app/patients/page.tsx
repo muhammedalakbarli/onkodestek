@@ -1,5 +1,5 @@
 import Navbar from "@/components/Navbar";
-import PatientCard from "@/components/PatientCard";
+import PatientFilter from "@/components/PatientFilter";
 import { db } from "@/lib/db";
 import { patients } from "@/drizzle/schema";
 import type { Patient } from "@/drizzle/schema";
@@ -74,11 +74,7 @@ export default async function PatientsPage() {
             </a>
           </div>
         ) : (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {list.map((p) => (
-              <PatientCard key={p.id} patient={p} />
-            ))}
-          </div>
+          <PatientFilter patients={list} />
         )}
       </main>
     </>
