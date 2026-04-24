@@ -26,27 +26,29 @@ export default async function LoginPage({
     <div className="min-h-screen bg-white flex">
 
       {/* Sol panel — brend */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 flex-col justify-between p-12 relative overflow-hidden">
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-900 via-teal-800 to-blue-900 flex-col justify-between p-12 relative overflow-hidden">
         {/* Fon naxışı */}
         <div className="absolute inset-0 hero-pattern opacity-30 pointer-events-none" />
-        <div className="absolute -top-20 -right-20 w-72 h-72 bg-white/5 rounded-full blur-3xl" />
-        <div className="absolute -bottom-20 -left-20 w-72 h-72 bg-indigo-500/20 rounded-full blur-3xl" />
+        <div className="absolute -top-20 -right-20 w-72 h-72 bg-teal-400/10 rounded-full blur-3xl" />
+        <div className="absolute -bottom-20 -left-20 w-72 h-72 bg-teal-500/15 rounded-full blur-3xl" />
 
         {/* Logo */}
         <div className="relative flex items-center gap-3">
           <Image src="/logo.jpeg" alt="onkodəstək" width={44} height={44} className="rounded-xl object-contain" />
           <div>
             <p className="text-white font-bold text-lg leading-none">onkodəstək</p>
-            <p className="text-blue-200 text-xs mt-0.5">Həyata dəstək ol</p>
+            <p className="text-teal-200 text-xs mt-0.5">Həyata dəstək ol</p>
           </div>
         </div>
 
         {/* Orta mətn */}
         <div className="relative">
-          <h2 className="text-3xl font-extrabold text-white leading-tight mb-4">
-            Şəffaf yardım,<br />ölçülə bilən təsir
+          <h2 className="text-3xl font-extrabold leading-tight mb-4">
+            <span className="bg-gradient-to-r from-teal-300 to-blue-200 bg-clip-text text-transparent">Şəffaf yardım,</span>
+            <br />
+            <span className="text-white">ölçülə bilən təsir</span>
           </h2>
-          <p className="text-blue-200 text-sm leading-relaxed mb-8">
+          <p className="text-teal-100/80 text-sm leading-relaxed mb-8">
             Etdiyiniz hər ianə birbaşa xəstəyə çatır.
             Hər qəpiyin hara getdiyini real vaxtda izləyirsiniz.
           </p>
@@ -62,13 +64,13 @@ export default async function LoginPage({
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
-                <p className="text-blue-100 text-sm">{text}</p>
+                <p className="text-teal-50 text-sm">{text}</p>
               </div>
             ))}
           </div>
         </div>
 
-        <p className="relative text-blue-300 text-xs">
+        <p className="relative text-teal-300/70 text-xs">
           © 2026 onkodəstək
         </p>
       </div>
@@ -145,7 +147,7 @@ export default async function LoginPage({
                   name="id"
                   placeholder="İzləmə kodu (OKD-XXXXXX)"
                   maxLength={12}
-                  className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-slate-400 uppercase"
+                  className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent placeholder-slate-400 uppercase"
                 />
                 <button
                   type="submit"
@@ -163,7 +165,7 @@ export default async function LoginPage({
 
         <p className="mt-12 text-xs text-slate-400 text-center">
           Daxil olmaqla{" "}
-          <a href="#" className="text-blue-600 hover:underline">İstifadə Şərtlərini</a>{" "}
+          <a href="#" className="text-teal-600 hover:underline">İstifadə Şərtlərini</a>{" "}
           qəbul etmiş olursunuz.
         </p>
       </div>
