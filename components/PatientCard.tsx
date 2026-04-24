@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { formatCurrency, calcProgress } from "@/lib/utils";
 import ProgressBar from "./ProgressBar";
+import DonationModal from "./DonationModal";
 import type { Patient } from "@/drizzle/schema";
 
 const STATUS_CONFIG: Record<string, { label: string; dot: string; badge: string }> = {
@@ -32,7 +33,8 @@ export default function PatientCard({ patient }: { patient: Patient }) {
   const avatarColor = getAvatarColor(patient.fullName);
 
   return (
-    <Link href={`/patients/${patient.id}`} className="block group">
+    <div className="flex flex-col">
+      <Link href={`/patients/${patient.id}`} className="block group flex-1">
       <div className="bg-white rounded-2xl border border-slate-100 shadow-sm group-hover:shadow-lg group-hover:-translate-y-1 transition-all duration-200 overflow-hidden flex flex-col">
 
         {/* Yuxarı rəngli zolaq */}
@@ -103,6 +105,12 @@ export default function PatientCard({ patient }: { patient: Patient }) {
           )}
         </div>
       </div>
-    </Link>
+      </Link>
+      {patient.status === "active" && (
+        <div className="mt-2">
+          <DonationModal patientName={patient.fullName} trackId={patient.trackId} />
+        </div>
+      )}
+    </div>
   );
 }

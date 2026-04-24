@@ -3,6 +3,7 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import PhotoLightbox from "@/components/PhotoLightbox";
 import ProgressBar from "@/components/ProgressBar";
+import DonationModal from "@/components/DonationModal";
 import { db } from "@/lib/db";
 import { patients, transactions } from "@/drizzle/schema";
 import { eq } from "drizzle-orm";
@@ -151,6 +152,15 @@ export default async function PatientPage({
             <p className="text-xs text-slate-400 mt-4">
               Müraciət tarixi: {formatDate(patient.createdAt)}
             </p>
+
+            {patient.status === "active" && (
+              <div className="mt-5">
+                <DonationModal
+                  patientName={patient.fullName}
+                  trackId={patient.trackId}
+                />
+              </div>
+            )}
           </div>
         </div>
 
