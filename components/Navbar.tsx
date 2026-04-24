@@ -53,8 +53,7 @@ export default async function Navbar() {
                 className="hidden sm:flex items-center gap-2 text-sm text-slate-700 hover:text-teal-600 font-medium px-3 py-2 rounded-lg hover:bg-teal-50 transition-all"
               >
                 {session.user.image ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={session.user.image} alt="" className="w-6 h-6 rounded-full" />
+                  <Image src={session.user.image} alt="" width={24} height={24} className="rounded-full" />
                 ) : (
                   <div className="w-6 h-6 rounded-full bg-teal-100 flex items-center justify-center text-teal-600 text-xs font-bold">
                     {session.user.name?.[0] ?? "U"}
