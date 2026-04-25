@@ -1,17 +1,20 @@
 import { auth } from "@/auth";
+import { getUserBanStatus } from "@/lib/checkBan";
 import Link from "next/link";
 
 export const metadata = { title: "Hesab bloklandı" };
 
 export default async function BannedPage() {
   const session = await auth();
-  const bannedUntil = session?.user?.bannedUntil
-    ? new Date(session.user.bannedUntil)
-    : null;
+  const userId  = session?.user?.id;
+
+  const { bannedUntil, banReason } = userId
+    ? await getUserBanStatus(userId)
+    : { bannedUntil: null, banReason: null };
+
   const isPermanent = bannedUntil
     ? bannedUntil.getFullYear() >= 2099
     : false;
-  const reason = session?.user?.banReason;
 
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
@@ -40,10 +43,10 @@ export default async function BannedPage() {
           </p>
         ) : null}
 
-        {reason && (
+        {banReason && (
           <div className="bg-red-50 border border-red-100 rounded-xl px-4 py-3 mb-5 text-left">
             <p className="text-xs font-semibold text-red-600 uppercase tracking-wide mb-1">Səbəb</p>
-            <p className="text-sm text-red-700">{reason}</p>
+            <p className="text-sm text-red-700">{banReason}</p>
           </div>
         )}
 

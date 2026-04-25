@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import { auth } from "@/auth";
+import { getUserBanStatus } from "@/lib/checkBan";
 import "./globals.css";
 
 const inter = Inter({
@@ -44,11 +48,28 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  // Ban yoxlaması — /banned, /login, /api, /dashboard üçün skip
+  const hdrs = await headers();
+  const pathname = hdrs.get("x-pathname") ?? "";
+  const skipBanCheck =
+    pathname === "/banned" ||
+    pathname === "/login" ||
+    pathname.startsWith("/api/") ||
+    pathname.startsWith("/dashboard");
+
+  if (!skipBanCheck) {
+    const session = await auth();
+    if (session?.user?.id) {
+      const { isBanned } = await getUserBanStatus(session.user.id);
+      if (isBanned) redirect("/banned");
+    }
+  }
+
   return (
     <html lang="az">
       <body className={`${inter.variable} font-sans bg-slate-50 text-slate-900 antialiased min-h-full flex flex-col`}>
