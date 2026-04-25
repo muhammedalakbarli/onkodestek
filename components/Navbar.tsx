@@ -1,13 +1,14 @@
 import Link from "next/link";
 import Image from "next/image";
 import { auth, signOut } from "@/auth";
+import MobileMenu from "./MobileMenu";
 
 export default async function Navbar() {
   const session = await auth();
 
   return (
     <nav className="bg-white/90 backdrop-blur-md border-b border-slate-200/60 sticky top-0 z-50 shadow-sm">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between relative">
 
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 group">
@@ -27,7 +28,7 @@ export default async function Navbar() {
           </div>
         </Link>
 
-        {/* Nav linklər */}
+        {/* Desktop nav links */}
         <div className="hidden sm:flex items-center gap-1">
           {[
             { href: "/patients",     label: "Xəstələr" },
@@ -46,7 +47,7 @@ export default async function Navbar() {
           ))}
         </div>
 
-        {/* Sağ tərəf: auth + CTA */}
+        {/* Right side */}
         <div className="flex items-center gap-2">
           {session?.user ? (
             <>
@@ -69,7 +70,7 @@ export default async function Navbar() {
               }}>
                 <button
                   type="submit"
-                  className="text-xs text-slate-500 hover:text-red-500 px-2 py-1.5 rounded-lg hover:bg-red-50 transition-all font-medium"
+                  className="hidden sm:block text-xs text-slate-500 hover:text-red-500 px-2 py-1.5 rounded-lg hover:bg-red-50 transition-all font-medium"
                 >
                   Çıxış
                 </button>
@@ -78,7 +79,7 @@ export default async function Navbar() {
           ) : (
             <Link
               href="/login"
-              className="text-sm text-slate-700 hover:text-teal-600 font-medium px-3 py-2 rounded-lg hover:bg-teal-50 transition-all"
+              className="hidden sm:block text-sm text-slate-700 hover:text-teal-600 font-medium px-3 py-2 rounded-lg hover:bg-teal-50 transition-all"
             >
               Daxil ol
             </Link>
@@ -94,6 +95,9 @@ export default async function Navbar() {
             <span className="hidden sm:inline">Müraciət et</span>
             <span className="sm:hidden">Müraciət</span>
           </Link>
+
+          {/* Mobile hamburger */}
+          <MobileMenu user={session?.user ? { name: session.user.name, image: session.user.image } : undefined} />
         </div>
       </div>
     </nav>

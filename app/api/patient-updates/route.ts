@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { patientUpdates } from "@/drizzle/schema";
+import { patientUpdates, patients, transactions, users } from "@/drizzle/schema";
 import { isAdmin } from "@/lib/adminAuth";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, and, isNotNull, inArray } from "drizzle-orm";
 import { z } from "zod";
+import { sendPatientUpdateNotification } from "@/lib/email";
 
 const CreateSchema = z.object({
   patientId: z.number().int().positive(),
@@ -39,6 +40,46 @@ export async function POST(req: NextRequest) {
     .insert(patientUpdates)
     .values({ ...rest, photoUrl: photoUrl || null })
     .returning();
+
+  // Notify donors asynchronously
+  (async () => {
+    try {
+      const [patient] = await db.select({ fullName: patients.fullName })
+        .from(patients).where(eq(patients.id, rest.patientId));
+      if (!patient) return;
+
+      const donorIds = await db
+        .selectDistinct({ donorUserId: transactions.donorUserId })
+        .from(transactions)
+        .where(and(
+          eq(transactions.patientId, rest.patientId),
+          eq(transactions.type, "donation"),
+          isNotNull(transactions.donorUserId),
+        ));
+
+      const ids = donorIds.map((d) => d.donorUserId!).filter(Boolean);
+      if (!ids.length) return;
+
+      const donorUsers = await db
+        .select({ email: users.email, name: users.name })
+        .from(users)
+        .where(and(inArray(users.id, ids), isNotNull(users.email)));
+
+      const donors = donorUsers
+        .filter((u) => u.email)
+        .map((u) => ({ email: u.email!, name: u.name }));
+
+      await sendPatientUpdateNotification({
+        donors,
+        patientName: patient.fullName,
+        patientId: rest.patientId,
+        updateContent: rest.content,
+      });
+    } catch (err) {
+      console.error("Donor bildiriş xətası:", err);
+    }
+  })();
+
   return NextResponse.json(record, { status: 201 });
 }
 
