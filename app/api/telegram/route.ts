@@ -32,7 +32,16 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true });
   }
 
-  console.log("TG update received:", JSON.stringify(update).slice(0, 300));
+  // Son update-i DB-yə yaz (debug üçün)
+  try {
+    const { db } = await import("@/lib/db");
+    const { botSessions } = await import("@/drizzle/schema");
+    const json = JSON.stringify(update);
+    await db.insert(botSessions).values({ key: "debug:last_update", value: json, updatedAt: new Date() })
+      .onConflictDoUpdate({ target: botSessions.key, set: { value: json, updatedAt: new Date() } });
+  } catch (e) {
+    console.error("debug save failed:", e);
+  }
 
   // Mesaj gəlib
   const msg = update.message as Record<string, unknown> | undefined;
