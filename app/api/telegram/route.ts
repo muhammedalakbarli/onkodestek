@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const TOKEN = process.env.TELEGRAM_BOT_TOKEN!;
-const API = `https://api.telegram.org/bot${TOKEN}`;
+// Token funksiya içindən oxunur — module init vaxtı undefined ola bilər
+function api() {
+  return `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}`;
+}
 
 async function send(chatId: number, text: string) {
-  const res = await fetch(`${API}/sendMessage`, {
+  const res = await fetch(`${api()}/sendMessage`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ chat_id: chatId, text, parse_mode: "HTML" }),
@@ -65,7 +67,7 @@ export async function POST(req: NextRequest) {
     const data = cq.data as string | undefined;
 
     // Callback-i cavabla
-    await fetch(`${API}/answerCallbackQuery`, {
+    await fetch(`${api()}/answerCallbackQuery`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ callback_query_id: cq.id }),
