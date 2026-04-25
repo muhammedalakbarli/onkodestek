@@ -80,7 +80,25 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-lg font-bold text-slate-900 mb-3">7. Hüquqi əsas</h2>
+            <h2 className="text-lg font-bold text-slate-900 mb-3">7. Beynəlxalq məlumat ötürülməsi</h2>
+            <p>
+              Platformanın texniki infrastrukturu ABŞ-da yerləşir. Məlumatlarınız aşağıdakı xidmət
+              provayderlərinə ötürülə bilər:
+            </p>
+            <ul className="list-disc pl-5 mt-2 space-y-1">
+              <li><strong>Vercel Inc. (ABŞ)</strong> — hosting və serverless funksiyalar</li>
+              <li><strong>Neon Inc. (ABŞ)</strong> — PostgreSQL verilənlər bazası</li>
+              <li><strong>Google LLC (ABŞ)</strong> — autentifikasiya (OAuth)</li>
+              <li><strong>Resend Inc. (ABŞ)</strong> — e-poçt bildirişləri</li>
+            </ul>
+            <p className="mt-3">
+              Azərbaycan Respublikasının &quot;Fərdi məlumatlar haqqında&quot; qanununun 10-cu maddəsinə
+              əsasən beynəlxalq ötürmə üçün müraciət formasında açıq razılığınız alınır.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-lg font-bold text-slate-900 mb-3">8. Hüquqi əsas</h2>
             <p>Bu siyasət Azərbaycan Respublikasının &quot;Fərdi məlumatlar haqqında&quot; qanununa və beynəlxalq data qorunması prinsiplərinə (GDPR) uyğun olaraq hazırlanmışdır.</p>
           </section>
 

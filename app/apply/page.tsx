@@ -34,6 +34,8 @@ export default function ApplyPage() {
   const [docFile, setDocFile] = useState<File | null>(null);
   const docRef = useRef<HTMLInputElement>(null);
 
+  const [consented, setConsented] = useState(false);
+
   const [form, setForm] = useState<FormData>({
     fullName: "",
     age: "",
@@ -294,6 +296,36 @@ export default function ApplyPage() {
               </div>
             </div>
 
+            {/* Məlumat razılığı */}
+            <label className="flex items-start gap-3 cursor-pointer select-none bg-white border border-slate-200 rounded-xl p-4">
+              <div className="relative mt-0.5 shrink-0">
+                <input
+                  type="checkbox"
+                  checked={consented}
+                  onChange={(e) => setConsented(e.target.checked)}
+                  className="sr-only"
+                />
+                <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all ${
+                  consented ? "bg-teal-600 border-teal-600" : "bg-white border-slate-300"
+                }`}>
+                  {consented && (
+                    <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                  )}
+                </div>
+              </div>
+              <span className="text-xs text-slate-600 leading-relaxed">
+                Xəstəyə aid tibbi məlumatların (diaqnoz, sənədlər, şəkil) toplanmasına, ABŞ-da yerləşən
+                Vercel və Neon serverlərində saxlanmasına, yalnız verifikasiya və kampaniya məqsədilə
+                istifadəsinə{" "}
+                <span className="font-semibold text-slate-800">
+                  Azərbaycan Respublikasının &quot;Fərdi məlumatlar haqqında&quot; qanununa uyğun olaraq
+                </span>{" "}
+                açıq razılıq verirəm.
+              </span>
+            </label>
+
             <div className="flex gap-3">
               <button
                 onClick={() => { setError(""); setStep("step1"); }}
@@ -307,11 +339,15 @@ export default function ApplyPage() {
                     setError("Zəhmət olmasa lazım olan məbləği daxil edin");
                     return;
                   }
+                  if (!consented) {
+                    setError("Məlumat razılığını qəbul etmədən müraciət göndərmək mümkün deyil");
+                    return;
+                  }
                   setError("");
                   submit();
                 }}
-                disabled={loading}
-                className="flex-1 bg-teal-600 hover:bg-teal-700 disabled:opacity-60 text-white font-semibold py-3.5 rounded-xl text-sm transition-colors"
+                disabled={loading || !consented}
+                className="flex-1 bg-teal-600 hover:bg-teal-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-3.5 rounded-xl text-sm transition-colors"
               >
                 {loading ? "Göndərilir..." : "Müraciəti göndər"}
               </button>

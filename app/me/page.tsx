@@ -8,6 +8,7 @@ import { eq, desc } from "drizzle-orm";
 import Link from "next/link";
 import Image from "next/image";
 import { formatCurrency } from "@/lib/utils";
+import DeleteAccount from "./DeleteAccount";
 
 export const dynamic = "force-dynamic";
 
@@ -302,14 +303,14 @@ export default async function MePage() {
               </div>
             </div>
 
-            <div className="mt-5 pt-5 border-t border-slate-100">
+            <div className="mt-5 pt-5 border-t border-slate-100 space-y-1">
               <form action={async () => {
                 "use server";
                 await signOut({ redirectTo: "/" });
               }}>
                 <button
                   type="submit"
-                  className="flex items-center gap-2 text-sm text-red-500 hover:text-red-700 font-medium transition-colors"
+                  className="flex items-center gap-2 text-sm text-slate-500 hover:text-slate-700 font-medium transition-colors"
                 >
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -317,6 +318,7 @@ export default async function MePage() {
                   Hesabdan çıx
                 </button>
               </form>
+              <DeleteAccount />
             </div>
           </div>
 
