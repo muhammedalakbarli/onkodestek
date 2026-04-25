@@ -1,29 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// Token funksiya içindən oxunur — module init vaxtı undefined ola bilər
-function api() {
-  return `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}`;
-}
-
-async function send(chatId: number, text: string) {
-  const res = await fetch(`${api()}/sendMessage`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ chat_id: chatId, text, parse_mode: "HTML" }),
-  });
-  const json = await res.json();
-  if (!json.ok) console.error("sendMessage failed:", json);
-  return json;
-}
-
 export async function POST(req: NextRequest) {
-  const configuredSecret = process.env.TELEGRAM_WEBHOOK_SECRET;
-  if (configuredSecret) {
-    const incoming = req.headers.get("x-telegram-bot-api-secret-token");
-    if (incoming !== configuredSecret) {
-      return new NextResponse("Unauthorized", { status: 401 });
-    }
-  }
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  if (!token) return NextResponse.json({ ok: true });
 
   let update: Record<string, unknown>;
   try {
@@ -32,64 +11,56 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true });
   }
 
-  // Son update-i DB-yə yaz (debug üçün)
-  try {
-    const { db } = await import("@/lib/db");
-    const { botSessions } = await import("@/drizzle/schema");
-    const json = JSON.stringify(update);
-    await db.insert(botSessions).values({ key: "debug:last_update", value: json, updatedAt: new Date() })
-      .onConflictDoUpdate({ target: botSessions.key, set: { value: json, updatedAt: new Date() } });
-  } catch (e) {
-    console.error("debug save failed:", e);
-  }
-
-  // Mesaj gəlib
-  const msg = update.message as Record<string, unknown> | undefined;
+  const msg = (update.message ?? update.edited_message) as Record<string, unknown> | undefined;
   if (msg) {
-    const chatId = (msg.chat as Record<string, unknown>).id as number;
+    const chat = msg.chat as Record<string, unknown>;
+    const chatId = chat.id as number;
     const text = (msg.text as string | undefined) ?? "";
 
+    let reply = "";
     if (text.startsWith("/start")) {
-      await send(chatId,
+      reply =
         `Salam! 👋\n\n<b>Onkodəstək</b> platformasına xoş gəldiniz.\n\n` +
         `Biz Azərbaycanda onkoloji xəstəliklərlə mübarizə aparan şəxslərə şəffaf şəkildə maddi dəstək göstəririk.\n\n` +
-        `💙 Yardım üçün saytımıza keçin: https://onkodestek.vercel.app/apply\n\n` +
-        `📊 Müraciəti izləmək: /izle OKD-XXXXXX`
-      );
+        `💙 Yardım: https://onkodestek.vercel.app/apply\n` +
+        `📊 Müraciəti izlə: /izle OKD-XXXXXX`;
     } else if (text.startsWith("/izle ")) {
       const trackId = text.slice(6).trim().toUpperCase();
-      await send(chatId, `🔍 <b>${trackId}</b> izlənir...\n\nSaytda izləyin: https://onkodestek.vercel.app/track?id=${trackId}`);
+      reply = `🔍 İzləmə kodu: <b>${trackId}</b>\n\nhttps://onkodestek.vercel.app/track?id=${trackId}`;
     } else if (text.startsWith("/myid")) {
-      await send(chatId, `🆔 Sizin Chat ID: <code>${chatId}</code>`);
+      reply = `🆔 Chat ID: <code>${chatId}</code>`;
     } else {
-      await send(chatId,
-        `📋 Yardım müraciəti üçün:\nhttps://onkodestek.vercel.app/apply\n\n` +
-        `📊 Müraciəti izləmək: /izle OKD-XXXXXX`
-      );
+      reply = `💙 Yardım üçün: https://onkodestek.vercel.app/apply\n📊 Müraciəti izlə: /izle OKD-XXXXXX`;
+    }
+
+    if (reply) {
+      await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ chat_id: chatId, text: reply, parse_mode: "HTML" }),
+      });
     }
   }
 
-  // Callback query
   const cq = update.callback_query as Record<string, unknown> | undefined;
   if (cq) {
-    const chatId = ((cq.message as Record<string, unknown>)?.chat as Record<string, unknown>)?.id as number;
-    const data = cq.data as string | undefined;
-
-    // Callback-i cavabla
-    await fetch(`${api()}/answerCallbackQuery`, {
+    await fetch(`https://api.telegram.org/bot${token}/answerCallbackQuery`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ callback_query_id: cq.id }),
+      body: JSON.stringify({ callback_query_id: cq.id as string }),
     });
-
-    if (data === "about" && chatId) {
-      await send(chatId,
-        `ℹ️ <b>Onkodəstək haqqında</b>\n\n` +
-        `✅ Hər xəstə sənəd yoxlamasından keçir\n` +
-        `✅ Hər ianə birbaşa xəstəyə çatır\n` +
-        `✅ Hər xərc qəbzlə ictimaiyyətə açıqlanır\n\n` +
-        `🌐 https://onkodestek.vercel.app`
-      );
+    const cqChat = ((cq.message as Record<string, unknown>)?.chat as Record<string, unknown>);
+    const cqChatId = cqChat?.id as number | undefined;
+    if (cqChatId && cq.data === "about") {
+      await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chat_id: cqChatId,
+          text: `ℹ️ <b>Onkodəstək</b>\n\n✅ Hər xəstə sənəd yoxlamasından keçir\n✅ Hər ianə birbaşa xəstəyə çatır\n✅ Hər xərc ictimaiyyətə açıqlanır\n\n🌐 https://onkodestek.vercel.app`,
+          parse_mode: "HTML",
+        }),
+      });
     }
   }
 
