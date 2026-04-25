@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { signOut } from "next-auth/react";
 
 interface NavUser {
   name?: string | null;
@@ -69,15 +70,13 @@ export default function MobileMenu({ user }: { user?: NavUser }) {
                   )}
                   {user.name}
                 </Link>
-                <form action="/api/auth/signout" method="POST">
-                  <button
-                    type="submit"
-                    onClick={() => setOpen(false)}
-                    className="block w-full text-left px-3 py-2.5 text-sm font-medium text-red-500 hover:bg-red-50 rounded-xl transition-all"
-                  >
-                    Çıxış
-                  </button>
-                </form>
+                <button
+                  type="button"
+                  onClick={() => { setOpen(false); signOut({ callbackUrl: "/" }); }}
+                  className="block w-full text-left px-3 py-2.5 text-sm font-medium text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                >
+                  Çıxış
+                </button>
               </>
             ) : (
               <Link
