@@ -8,8 +8,8 @@ const SECRET = new TextEncoder().encode(
 const COOKIE_NAME = "onko_admin_token";
 const TOKEN_TTL   = 60 * 60 * 24 * 30; // 30 gün
 
-export async function signAdminToken(): Promise<string> {
-  return new SignJWT({ role: "admin" })
+export async function signAdminToken(email?: string): Promise<string> {
+  return new SignJWT({ role: "admin", email: email ?? "" })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime(`${TOKEN_TTL}s`)

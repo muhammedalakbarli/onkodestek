@@ -9,7 +9,6 @@ const COOKIE_NAME = "onko_admin_token";
  * İkisindən biri keçsə admin sayılır.
  */
 export async function isAdmin(req: NextRequest): Promise<boolean> {
-  // 1. JWT cookie yoxla
   const token = req.cookies.get(COOKIE_NAME)?.value;
   if (token) {
     try {
@@ -18,11 +17,24 @@ export async function isAdmin(req: NextRequest): Promise<boolean> {
     } catch { /* token yanlışdır */ }
   }
 
-  // 2. x-admin-secret header yoxla (köhnə üsul, geri uyğunluq)
   const secret = req.headers.get("x-admin-secret");
   if (secret && secret === process.env.ADMIN_SECRET) {
     return true;
   }
 
   return false;
+}
+
+/**
+ * JWT-dən admin emailini oxuyur. Əgər yoxdursa "admin" qaytarır.
+ */
+export async function getAdminEmail(req: NextRequest): Promise<string> {
+  const token = req.cookies.get(COOKIE_NAME)?.value;
+  if (token) {
+    try {
+      const { payload } = await jwtVerify(token, SECRET);
+      return (payload.email as string) || "admin";
+    } catch { /* fall through */ }
+  }
+  return "admin";
 }

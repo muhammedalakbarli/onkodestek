@@ -48,5 +48,23 @@ export async function GET(req: NextRequest) {
     results.push(`volunteer_requests.admin_note: XƏTA — ${err}`);
   }
 
+  // audit_logs cədvəli
+  try {
+    await db.execute(sql`
+      CREATE TABLE IF NOT EXISTS audit_logs (
+        id           SERIAL PRIMARY KEY,
+        admin_email  VARCHAR(255) NOT NULL,
+        action       VARCHAR(100) NOT NULL,
+        entity_type  VARCHAR(50),
+        entity_id    INTEGER,
+        detail       TEXT,
+        created_at   TIMESTAMP NOT NULL DEFAULT NOW()
+      )
+    `);
+    results.push("audit_logs: OK");
+  } catch (err) {
+    results.push(`audit_logs: XƏTA — ${err}`);
+  }
+
   return NextResponse.json({ done: true, results });
 }

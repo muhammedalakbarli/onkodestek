@@ -152,6 +152,20 @@ export const platformDonations = pgTable("platform_donations", {
   createdAt:   timestamp("created_at").notNull().defaultNow(),
 });
 
+// ── Audit Log ────────────────────────────────────────────────────────────────
+
+export const auditLogs = pgTable("audit_logs", {
+  id:          serial("id").primaryKey(),
+  adminEmail:  varchar("admin_email", { length: 255 }).notNull(),
+  action:      varchar("action", { length: 100 }).notNull(),  // e.g. "patient.create", "transaction.add"
+  entityType:  varchar("entity_type", { length: 50 }),        // e.g. "patient", "transaction"
+  entityId:    integer("entity_id"),
+  detail:      text("detail"),                                 // JSON or human-readable summary
+  createdAt:   timestamp("created_at").notNull().defaultNow(),
+});
+
+export type AuditLog = typeof auditLogs.$inferSelect;
+
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 export type Patient            = typeof patients.$inferSelect;

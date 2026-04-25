@@ -5,6 +5,8 @@ import { isAdmin } from "@/lib/adminAuth";
 import { eq, desc, and, isNotNull, inArray } from "drizzle-orm";
 import { z } from "zod";
 import { sendPatientUpdateNotification } from "@/lib/email";
+import { getAdminEmail } from "@/lib/adminAuth";
+import { logAction } from "@/lib/audit";
 
 const CreateSchema = z.object({
   patientId: z.number().int().positive(),
@@ -40,6 +42,8 @@ export async function POST(req: NextRequest) {
     .insert(patientUpdates)
     .values({ ...rest, photoUrl: photoUrl || null })
     .returning();
+
+  logAction({ adminEmail: await getAdminEmail(req), action: "patient_update.create", entityType: "patient", entityId: rest.patientId, detail: rest.content.slice(0, 200) }).catch(() => {});
 
   // Notify donors asynchronously
   (async () => {

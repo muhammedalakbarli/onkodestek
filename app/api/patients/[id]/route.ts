@@ -2,8 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { patients, transactions } from "@/drizzle/schema";
 import { eq } from "drizzle-orm";
-import { isAdmin } from "@/lib/adminAuth";
+import { isAdmin, getAdminEmail } from "@/lib/adminAuth";
 import { PatientPatchSchema } from "@/lib/schemas";
+import { logAction } from "@/lib/audit";
 
 export async function DELETE(
   req: NextRequest,
@@ -20,6 +21,7 @@ export async function DELETE(
   try {
     await db.delete(transactions).where(eq(transactions.patientId, patientId));
     await db.delete(patients).where(eq(patients.id, patientId));
+    logAction({ adminEmail: await getAdminEmail(req), action: "patient.delete", entityType: "patient", entityId: patientId }).catch(() => {});
     return NextResponse.json({ ok: true });
   } catch (err) {
     console.error(err);
@@ -96,6 +98,7 @@ export async function PATCH(
       .where(eq(patients.id, patientId))
       .returning();
 
+    logAction({ adminEmail: await getAdminEmail(req), action: "patient.update", entityType: "patient", entityId: patientId, detail: JSON.stringify(parsed.data) }).catch(() => {});
     return NextResponse.json(updated);
   } catch (err) {
     console.error(err);

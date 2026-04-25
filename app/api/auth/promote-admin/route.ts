@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(new URL("/login?error=Unauthorized", req.url));
   }
 
-  const token = await signAdminToken();
+  const token = await signAdminToken(email);
   const res   = NextResponse.redirect(new URL("/dashboard", req.url));
   res.cookies.set(COOKIE_NAME, token, {
     httpOnly: true,

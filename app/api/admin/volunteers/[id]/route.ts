@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { volunteerRequests } from "@/drizzle/schema";
-import { isAdmin } from "@/lib/adminAuth";
+import { isAdmin, getAdminEmail } from "@/lib/adminAuth";
+import { logAction } from "@/lib/audit";
 import { eq } from "drizzle-orm";
 
 export async function PATCH(
@@ -22,5 +23,6 @@ export async function PATCH(
     .where(eq(volunteerRequests.id, parseInt(id)))
     .returning();
   if (!updated) return NextResponse.json({ error: "Tapılmadı" }, { status: 404 });
+  logAction({ adminEmail: await getAdminEmail(req), action: "volunteer.review", entityType: "volunteer", entityId: parseInt(id), detail: JSON.stringify(patch) }).catch(() => {});
   return NextResponse.json(updated);
 }
