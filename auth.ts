@@ -4,6 +4,7 @@ import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { db } from "@/lib/db";
 import { users, accounts, sessions, verificationTokens } from "@/drizzle/schema";
 import { eq } from "drizzle-orm";
+import { sendWelcomeEmail } from "@/lib/email";
 
 const ADMIN_EMAILS = (process.env.ADMIN_EMAILS ?? "")
   .split(",")
@@ -55,6 +56,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.email = token.email ?? session.user.email;
       }
       return session;
+    },
+  },
+  events: {
+    async createUser({ user }) {
+      if (user.email) {
+        sendWelcomeEmail({
+          toEmail: user.email,
+          toName: user.name ?? "İstifadəçi",
+        }).catch(console.error);
+      }
     },
   },
   pages: {
