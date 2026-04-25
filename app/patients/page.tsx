@@ -70,15 +70,13 @@ export default async function PatientsPage() {
               <Building2 className="w-9 h-9 text-slate-400" strokeWidth={1.5} />
             </div>
             <h2 className="text-xl font-bold text-slate-700 mb-2">Hələlik açıq müraciət yoxdur</h2>
-            <p className="text-slate-400 text-sm mb-6">Yeni kampaniyalar üçün Telegram botunu izləyin.</p>
-            <a
-              href="https://t.me/OnkoDestek_bot"
-              target="_blank"
-              rel="noopener noreferrer"
+            <p className="text-slate-400 text-sm mb-6">Yeni kampaniyalar əlavə olunduqda burada görünəcək. Bir az sonra yenidən yoxlayın.</p>
+            <Link
+              href="/apply"
               className="inline-flex items-center gap-2 bg-blue-600 text-white font-semibold px-6 py-2.5 rounded-full hover:bg-blue-700 transition-colors text-sm"
             >
-              Telegram botuna keç
-            </a>
+              Yardım müraciəti et
+            </Link>
           </div>
         ) : (
           <PatientFilter patients={list} isGuest={isGuest} />
