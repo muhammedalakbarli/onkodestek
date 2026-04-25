@@ -150,9 +150,12 @@ export default function UsersPage() {
                       )}
                     </td>
                     <td className="px-5 py-3.5 text-right text-slate-400 text-xs hidden lg:table-cell">
-                      {new Date(u.createdAt).toLocaleDateString("az-AZ", {
+                      <p>{new Date(u.createdAt).toLocaleDateString("az-AZ", {
                         day: "numeric", month: "short", year: "numeric",
-                      })}
+                      })}</p>
+                      <p className="text-slate-300">{new Date(u.createdAt).toLocaleTimeString("az-AZ", {
+                        hour: "2-digit", minute: "2-digit",
+                      })}</p>
                     </td>
                   </tr>
                 ))}
