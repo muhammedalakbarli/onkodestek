@@ -13,25 +13,25 @@ const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://onkodestek.vercel.ap
 export const metadata: Metadata = {
   metadataBase: new URL(APP_URL),
   title: {
-    default: "onkodəstək — Həyata dəstək ol",
-    template: "%s | onkodəstək",
+    default: "OnkoDəstək — Həyata dəstək ol",
+    template: "%s | OnkoDəstək",
   },
   description:
     "Azərbaycanda onkoloji xəstəliklərlə mübarizə aparan şəxslərə şəffaf xeyriyyəçilik platforması. Hər ianənin hara xərcləndiyini real vaxt rejimində izləyin.",
   keywords: ["xeyriyyə", "onkologiya", "xərçəng", "Azərbaycan", "şəffaflıq", "ianə", "onkodestek"],
-  authors: [{ name: "onkodəstək" }],
-  creator: "onkodəstək",
+  authors: [{ name: "OnkoDəstək" }],
+  creator: "OnkoDəstək",
   openGraph: {
-    title: "onkodəstək — Həyata dəstək ol",
+    title: "OnkoDəstək — Həyata dəstək ol",
     description: "Azərbaycanda onkoloji xəstəliklərə qarşı şəffaf xeyriyyəçilik platforması.",
     url: APP_URL,
-    siteName: "onkodəstək",
+    siteName: "OnkoDəstək",
     locale: "az_AZ",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "onkodəstək — Həyata dəstək ol",
+    title: "OnkoDəstək — Həyata dəstək ol",
     description: "Azərbaycanda onkoloji xəstəliklərə qarşı şəffaf xeyriyyəçilik platforması.",
   },
   robots: {

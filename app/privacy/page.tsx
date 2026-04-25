@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Məxfilik siyasəti",
-  description: "onkodəstək platformasının məxfilik siyasəti — şəxsi məlumatların toplanması, istifadəsi və qorunması.",
+  description: "OnkoDəstək platformasının məxfilik siyasəti — şəxsi məlumatların toplanması, istifadəsi və qorunması.",
 };
 
 export default function PrivacyPage() {
@@ -23,7 +23,7 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="text-lg font-bold text-slate-900 mb-3">1. Hansı məlumatları toplayırıq?</h2>
-            <p>onkodəstək platformasından istifadə etdikdə aşağıdakı məlumatlar toplanır:</p>
+            <p>OnkoDəstək platformasından istifadə etdikdə aşağıdakı məlumatlar toplanır:</p>
             <ul className="list-disc pl-5 mt-2 space-y-1">
               <li><strong>Müraciət forması:</strong> Ad, soyad, telefon nömrəsi, xəstənin tibbi məlumatları</li>
               <li><strong>Google ilə giriş:</strong> Ad, e-poçt ünvanı, profil şəkli (Google tərəfindən verilir)</li>

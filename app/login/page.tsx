@@ -89,9 +89,9 @@ export default async function LoginPage({
         <div className="absolute -bottom-20 -left-20 w-72 h-72 bg-teal-500/15 rounded-full blur-3xl" />
 
         <div className="relative flex items-center gap-3">
-          <Image src="/logo.jpeg" alt="onkodəstək" width={44} height={44} className="rounded-xl object-contain" />
+          <Image src="/logo.jpeg" alt="OnkoDəstək" width={44} height={44} className="rounded-xl object-contain" />
           <div>
-            <p className="text-white font-bold text-lg leading-none">onkodəstək</p>
+            <p className="text-white font-bold text-lg leading-none">OnkoDəstək</p>
             <p className="text-teal-200 text-xs mt-0.5">Həyata dəstək ol</p>
           </div>
         </div>
@@ -124,15 +124,15 @@ export default async function LoginPage({
           </div>
         </div>
 
-        <p className="relative text-teal-300/70 text-xs">© 2026 onkodəstək</p>
+        <p className="relative text-teal-300/70 text-xs">© 2026 OnkoDəstək</p>
       </div>
 
       {/* Sağ panel — form */}
       <div className="flex-1 flex flex-col items-center justify-center px-6 py-12">
         {/* Mobil logo */}
         <div className="lg:hidden flex items-center gap-2.5 mb-10">
-          <Image src="/logo.jpeg" alt="onkodəstək" width={36} height={36} className="rounded-xl object-contain" />
-          <span className="font-bold text-slate-900 text-lg">onkodəstək</span>
+          <Image src="/logo.jpeg" alt="OnkoDəstək" width={36} height={36} className="rounded-xl object-contain" />
+          <span className="font-bold text-slate-900 text-lg">OnkoDəstək</span>
         </div>
 
         <div className="w-full max-w-sm">

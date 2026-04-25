@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
 
     if (text.startsWith("/start")) {
       await sendMessage(token, chatId,
-        `Salam! 👋\n\n<b>Onkodəstək</b> platformasına xoş gəldiniz.\n\n` +
+        `Salam! 👋\n\n<b>OnkoDəstək</b> platformasına xoş gəldiniz.\n\n` +
         `Biz Azərbaycanda onkoloji xəstəliklərlə mübarizə aparan şəxslərə:\n` +
         `💰 Maddi dəstək\n💙 Psixoloji dəstək\n📊 Şəffaf hesabat\n\ntəqdim edirik.`,
         { reply_markup: kb(
@@ -114,7 +114,7 @@ export async function POST(req: NextRequest) {
 
     if (data === "about") {
       await sendMessage(token, chatId,
-        `ℹ️ <b>Onkodəstək haqqında</b>\n\n` +
+        `ℹ️ <b>OnkoDəstək haqqında</b>\n\n` +
         `✅ Hər xəstə sənəd yoxlamasından keçir\n` +
         `✅ Hər ianə birbaşa xəstəyə çatır\n` +
         `✅ Hər xərc qəbzlə ictimaiyyətə açıqlanır\n\n` +

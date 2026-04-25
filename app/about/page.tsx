@@ -7,7 +7,7 @@ import { Search, ShieldCheck, Heart, Zap } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Haqqımızda",
-  description: "onkodəstək — Azərbaycanda onkoloji xəstəliklərə qarşı şəffaf xeyriyyəçilik platforması. Missiyamız, dəyərlərimiz və komandamız haqqında.",
+  description: "OnkoDəstək — Azərbaycanda onkoloji xəstəliklərə qarşı şəffaf xeyriyyəçilik platforması. Missiyamız, dəyərlərimiz və komandamız haqqında.",
 };
 
 const VALUES = [
@@ -64,7 +64,7 @@ export default function AboutPage() {
         <div className="relative max-w-3xl mx-auto px-4 sm:px-6 py-20 text-center">
           <div className="flex justify-center mb-6">
             <div className="w-16 h-16 bg-white/10 backdrop-blur rounded-2xl flex items-center justify-center border border-white/20">
-              <Image src="/logo.jpeg" alt="onkodəstək" width={44} height={44} className="rounded-xl object-contain" />
+              <Image src="/logo.jpeg" alt="OnkoDəstək" width={44} height={44} className="rounded-xl object-contain" />
             </div>
           </div>
           <p className="text-teal-300 text-xs font-semibold uppercase tracking-widest mb-4">Haqqımızda</p>
@@ -75,7 +75,7 @@ export default function AboutPage() {
             </span>
           </h1>
           <p className="text-blue-100 text-lg leading-relaxed max-w-2xl mx-auto">
-            onkodəstək — Azərbaycanda onkoloji xəstəliklərlə mübarizə aparan şəxslərə maddi
+            OnkoDəstək — Azərbaycanda onkoloji xəstəliklərlə mübarizə aparan şəxslərə maddi
             və psixoloji dəstək göstərən rəqəmsal xeyriyyəçilik platformasıdır.
           </p>
         </div>

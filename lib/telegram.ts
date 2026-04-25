@@ -34,7 +34,7 @@ bot.command("start", async (ctx) => {
 
   await ctx.reply(
     `Salam! 👋\n\n` +
-    `<b>Onkodəstək</b> platformasına xoş gəldiniz.\n\n` +
+    `<b>OnkoDəstək</b> platformasına xoş gəldiniz.\n\n` +
     `Biz Azərbaycanda onkoloji xəstəliklərlə mübarizə aparan şəxslərə:\n` +
     `💰 Maddi dəstək\n` +
     `💙 Psixoloji dəstək\n` +
@@ -49,8 +49,8 @@ bot.command("start", async (ctx) => {
 bot.callbackQuery("about", async (ctx) => {
   await ctx.answerCallbackQuery();
   await ctx.reply(
-    "ℹ️ <b>Onkodəstək haqqında</b>\n\n" +
-    "Onkodəstək, Azərbaycanda xərçənglə mübarizə aparan xəstələrə maddi dəstək göstərən şəffaf xeyriyyə platformasıdır.\n\n" +
+    "ℹ️ <b>OnkoDəstək haqqında</b>\n\n" +
+    "OnkoDəstək, Azərbaycanda xərçənglə mübarizə aparan xəstələrə maddi dəstək göstərən şəffaf xeyriyyə platformasıdır.\n\n" +
     "✅ Hər xəstə sənəd yoxlamasından keçir\n" +
     "✅ Hər ianə birbaşa xəstəyə çatır\n" +
     "✅ Hər xərc qəbzlə ictimaiyyətə açıqlanır\n\n" +
@@ -195,7 +195,7 @@ bot.callbackQuery("support_contact", async (ctx) => {
     "Psixologiya şöbəsi: +994 12 440-00-84\n\n" +
     "📞 <b>Azərbaycan Psixoloji Yardım Xətti</b>\n" +
     "860 (pulsuz, 24 saat, 7 gün)\n\n" +
-    "💬 <b>Onkodəstək könüllü psixoloqları</b>\n" +
+    "💬 <b>OnkoDəstək könüllü psixoloqları</b>\n" +
     "Yazın: @onkodestek_admin\n\n" +
     "<i>Kömək istəmək — ən doğru addımdır.</i>",
     {

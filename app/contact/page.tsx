@@ -3,8 +3,8 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "Əlaqə — onkodəstək",
-  description: "onkodəstək komandası ilə əlaqə saxlayın. Sual, müraciət, könüllülük və ya əməkdaşlıq üçün bizimlə əlaqə qurun.",
+  title: "Əlaqə — OnkoDəstək",
+  description: "OnkoDəstək komandası ilə əlaqə saxlayın. Sual, müraciət, könüllülük və ya əməkdaşlıq üçün bizimlə əlaqə qurun.",
 };
 
 const CHANNELS = [

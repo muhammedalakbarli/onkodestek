@@ -34,20 +34,20 @@ export async function generateMetadata({
     const pct = calcProgress(patient.collectedAmount, patient.goalAmount);
     const description =
       `${patient.diagnosis} — ${formatCurrency(patient.collectedAmount)} / ${formatCurrency(patient.goalAmount)} toplanıb (${pct}%). ` +
-      `onkodəstək platforması vasitəsilə dəstək ol.`;
+      `OnkoDəstək platforması vasitəsilə dəstək ol.`;
 
     return {
       title: `${patient.fullName} üçün dəstək`,
       description,
       openGraph: {
-        title: `${patient.fullName} üçün dəstək — onkodəstək`,
+        title: `${patient.fullName} üçün dəstək — OnkoDəstək`,
         description,
         url: `${BASE}/patients/${id}`,
         ...(patient.photoUrl ? { images: [{ url: patient.photoUrl, width: 800, height: 800 }] } : {}),
       },
       twitter: {
         card: patient.photoUrl ? "summary_large_image" : "summary",
-        title: `${patient.fullName} üçün dəstək — onkodəstək`,
+        title: `${patient.fullName} üçün dəstək — OnkoDəstək`,
         description,
       },
     };
@@ -214,7 +214,7 @@ export default async function PatientPage({
             <div className="mt-4 pt-4 border-t border-slate-100">
               <ShareButtons
                 url={`${process.env.NEXT_PUBLIC_APP_URL ?? "https://onkodestek.vercel.app"}/patients/${patient.id}`}
-                title={`${patient.fullName} üçün dəstək ol — onkodəstək`}
+                title={`${patient.fullName} üçün dəstək ol — OnkoDəstək`}
               />
             </div>
           </div>

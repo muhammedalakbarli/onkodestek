@@ -4,7 +4,7 @@ import Image from "next/image";
 export default function NotFound() {
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center px-4 text-center">
-      <Image src="/logo.jpeg" alt="onkodəstək" width={56} height={56} className="rounded-2xl object-contain mb-6" />
+      <Image src="/logo.jpeg" alt="OnkoDəstək" width={56} height={56} className="rounded-2xl object-contain mb-6" />
 
       <p className="text-7xl font-black text-slate-200 mb-2 select-none">404</p>
       <h1 className="text-xl font-bold text-slate-800 mb-2">Səhifə tapılmadı</h1>

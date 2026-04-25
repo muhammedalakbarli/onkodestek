@@ -420,8 +420,8 @@ export default async function HomePage() {
           <div className="flex flex-col md:flex-row justify-between gap-8">
             <div>
               <div className="flex items-center gap-2.5 mb-3">
-                <Image src="/logo.jpeg" alt="onkodəstək" width={28} height={28} className="rounded-lg object-contain" />
-                <span className="font-bold text-white text-base">onkodəstək</span>
+                <Image src="/logo.jpeg" alt="OnkoDəstək" width={28} height={28} className="rounded-lg object-contain" />
+                <span className="font-bold text-white text-base">OnkoDəstək</span>
               </div>
               <p className="text-sm max-w-xs leading-relaxed">
                 Azərbaycanda xərçənglə mübarizəni rəqəmsallaşdıraraq hər xəstəyə sistemli dəstək göstəririk.
@@ -447,7 +447,7 @@ export default async function HomePage() {
             </div>
           </div>
           <div className="border-t border-slate-800 mt-10 pt-6 text-xs text-slate-600 text-center space-y-2">
-            <div>© 2026 onkodəstək — Həyata dəstək ol</div>
+            <div>© 2026 OnkoDəstək — Həyata dəstək ol</div>
             <div className="flex justify-center gap-4">
               <Link href="/privacy" className="hover:text-slate-400 transition-colors">Məxfilik siyasəti</Link>
               <Link href="/terms" className="hover:text-slate-400 transition-colors">İstifadə şərtləri</Link>

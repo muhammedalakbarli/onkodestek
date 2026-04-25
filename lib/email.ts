@@ -43,7 +43,7 @@ export async function sendDonationThankYou({
     Xəstənin səhifəsinə bax →
   </a>
   <p style="color:#94a3b8;font-size:12px;border-top:1px solid #e2e8f0;padding-top:16px;margin-top:16px;">
-    Onkodəstək — Azərbaycanda onkoloji xəstələrə şəffaf xeyriyyə platforması.<br>
+    OnkoDəstək — Azərbaycanda onkoloji xəstələrə şəffaf xeyriyyə platforması.<br>
     <a href="${APP}" style="color:#0d9488;">onkodestek.vercel.app</a>
   </p>
 </div>`,
@@ -73,7 +73,7 @@ export async function sendPatientUpdateNotification({
       resend.emails.send({
         from: FROM,
         to: email,
-        subject: `${patientName} haqqında yeni xəbər — Onkodəstək`,
+        subject: `${patientName} haqqında yeni xəbər — OnkoDəstək`,
         html: `
 <div style="font-family:-apple-system,sans-serif;max-width:560px;margin:0 auto;padding:32px 24px;color:#1e293b;">
   <h1 style="font-size:20px;font-weight:700;margin-bottom:8px;">Yeni xəbər: ${patientName}</h1>
@@ -91,7 +91,7 @@ export async function sendPatientUpdateNotification({
   </a>
   <p style="color:#94a3b8;font-size:12px;border-top:1px solid #e2e8f0;padding-top:16px;margin-top:16px;">
     Bu emaili aldınız çünki ${patientName} üçün ianə etmisiniz.<br>
-    Onkodəstək — <a href="${APP}" style="color:#0d9488;">onkodestek.vercel.app</a>
+    OnkoDəstək — <a href="${APP}" style="color:#0d9488;">onkodestek.vercel.app</a>
   </p>
 </div>`,
       })
@@ -114,7 +114,7 @@ export async function sendVolunteerConfirmation({
     await resend.emails.send({
       from: FROM,
       to: toEmail,
-      subject: "Könüllü müraciətiniz alındı — Onkodəstək",
+      subject: "Könüllü müraciətiniz alındı — OnkoDəstək",
       html: `
 <div style="font-family:-apple-system,sans-serif;max-width:560px;margin:0 auto;padding:32px 24px;color:#1e293b;">
   <h1 style="font-size:22px;font-weight:700;margin-bottom:8px;">Müraciətiniz üçün təşəkkür! 🤝</h1>
@@ -135,7 +135,7 @@ export async function sendVolunteerConfirmation({
     Platforma haqqında daha çox →
   </a>
   <p style="color:#94a3b8;font-size:12px;border-top:1px solid #e2e8f0;padding-top:16px;margin-top:16px;">
-    Onkodəstək — Azərbaycanda onkoloji xəstələrə şəffaf xeyriyyə platforması.<br>
+    OnkoDəstək — Azərbaycanda onkoloji xəstələrə şəffaf xeyriyyə platforması.<br>
     <a href="${APP}" style="color:#0d9488;">onkodestek.vercel.app</a>
   </p>
 </div>`,

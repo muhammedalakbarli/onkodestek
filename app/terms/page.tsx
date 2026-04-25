@@ -4,8 +4,8 @@ import Footer from "@/components/Footer";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "İstifadə Şərtləri — onkodəstək",
-  description: "onkodəstək platformasının istifadə şərtləri. Platformadan istifadə etməklə bu şərtləri qəbul etmiş olursunuz.",
+  title: "İstifadə Şərtləri — OnkoDəstək",
+  description: "OnkoDəstək platformasının istifadə şərtləri. Platformadan istifadə etməklə bu şərtləri qəbul etmiş olursunuz.",
 };
 
 const LAST_UPDATED = "Aprel 2026";
@@ -14,7 +14,7 @@ const sections = [
   {
     id: "general",
     title: "1. Ümumi Müddəalar",
-    content: `onkodəstək ("Platforma") Azərbaycanda onkoloji xəstəliklə mübarizə aparan xəstələrə şəffaf maliyyə dəstəyi göstərmək məqsədilə yaradılmış qeyri-kommersiya xeyriyyəçilik platformasıdır.
+    content: `OnkoDəstək ("Platforma") Azərbaycanda onkoloji xəstəliklə mübarizə aparan xəstələrə şəffaf maliyyə dəstəyi göstərmək məqsədilə yaradılmış qeyri-kommersiya xeyriyyəçilik platformasıdır.
 
 Platformadan istifadə etməklə siz bu İstifadə Şərtlərini oxuduğunuzu, başa düşdüyünüzü və qəbul etdiyinizi təsdiqləyirsiniz. Bu şərtləri qəbul etmirsinizsə, platformadan istifadə etməkdən çəkinin.`,
   },
@@ -70,7 +70,7 @@ Platformadan istifadə etməklə siz bu İstifadə Şərtlərini oxuduğunuzu, b
       "Xidmət fasilələrindən, texniki xətalardan irəli gələn zərərlərə görə məsuliyyət daşımır",
       "Platformanı istifadəçi tərəfindən düzgün istifadə edilməməsindən doğan zərərlərə görə məsuliyyət daşımır",
     ],
-    prefix: "onkodəstək:",
+    prefix: "OnkoDəstək:",
   },
   {
     id: "privacy",

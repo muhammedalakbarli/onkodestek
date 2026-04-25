@@ -7,8 +7,8 @@ export default function Footer() {
       <div className="max-w-6xl mx-auto">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2.5">
-            <Image src="/logo.jpeg" alt="onkodəstək" width={28} height={28} className="rounded-lg object-contain" />
-            <span className="text-white font-semibold text-sm">onkodəstək</span>
+            <Image src="/logo.jpeg" alt="OnkoDəstək" width={28} height={28} className="rounded-lg object-contain" />
+            <span className="text-white font-semibold text-sm">OnkoDəstək</span>
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-xs">
@@ -52,7 +52,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="border-t border-slate-800 mt-6 pt-4 text-center text-xs">
-          © 2026 onkodəstək — Azərbaycanda onkoloji xəstəliklərə şəffaf dəstək
+          © 2026 OnkoDəstək — Azərbaycanda onkoloji xəstəliklərə şəffaf dəstək
         </div>
       </div>
     </footer>

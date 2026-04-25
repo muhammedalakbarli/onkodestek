@@ -4,7 +4,7 @@ import Footer from "@/components/Footer";
 import VolunteerForm from "@/components/volunteer/VolunteerForm";
 
 export const metadata: Metadata = {
-  title: "Könüllü ol — onkodəstək",
+  title: "Könüllü ol — OnkoDəstək",
   description: "Bacarıqlarınızla onkoloji xəstələrə dəstək olun. Tibbi, hüquqi, texniki, media sahəsində könüllü formu doldurun.",
 };
 

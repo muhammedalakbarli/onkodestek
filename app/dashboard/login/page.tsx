@@ -65,10 +65,10 @@ function AdminLoginForm() {
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
             <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center border border-white/20 backdrop-blur">
-              <Image src="/logo.jpeg" alt="onkodəstək" width={44} height={44} className="rounded-xl object-contain" />
+              <Image src="/logo.jpeg" alt="OnkoDəstək" width={44} height={44} className="rounded-xl object-contain" />
             </div>
           </div>
-          <h1 className="text-2xl font-bold text-white">onkodəstək</h1>
+          <h1 className="text-2xl font-bold text-white">OnkoDəstək</h1>
           <p className="text-slate-400 text-sm mt-1">Admin paneli</p>
         </div>
 
