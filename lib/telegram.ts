@@ -5,6 +5,11 @@ import { eq } from "drizzle-orm";
 
 export const bot = new Bot(process.env.TELEGRAM_BOT_TOKEN ?? "placeholder");
 
+// Bütün handler xətaları log-a yazılsın
+bot.catch((err) => {
+  console.error("Bot handler xətası:", err.message, err.ctx?.update);
+});
+
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://onkodestek.vercel.app";
 
 // ── /myid — admin chat ID-sini öyrən ─────────────────────────────────────────
