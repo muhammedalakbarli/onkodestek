@@ -137,6 +137,7 @@ export const volunteerRequests = pgTable("volunteer_requests", {
   message:    text("message"),
   cvUrl:      text("cv_url"),
   isReviewed: boolean("is_reviewed").notNull().default(false),
+  status:     varchar("status", { length: 20 }).notNull().default("pending"), // pending | interview | accepted | rejected
   adminNote:  text("admin_note"),
   createdAt:  timestamp("created_at").notNull().defaultNow(),
 });

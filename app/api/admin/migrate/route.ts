@@ -80,5 +80,16 @@ export async function GET(req: NextRequest) {
     results.push(`bot_sessions: XƏTA — ${err}`);
   }
 
+  // volunteer_requests-ə status sütunu
+  try {
+    await db.execute(sql`
+      ALTER TABLE volunteer_requests
+      ADD COLUMN IF NOT EXISTS status VARCHAR(20) NOT NULL DEFAULT 'pending'
+    `);
+    results.push("volunteer_requests.status: OK");
+  } catch (err) {
+    results.push(`volunteer_requests.status: XƏTA — ${err}`);
+  }
+
   return NextResponse.json({ done: true, results });
 }

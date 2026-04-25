@@ -155,6 +155,139 @@ export async function sendPatientUpdateNotification({
   );
 }
 
+export async function sendVolunteerInterviewInvite({
+  toEmail, toName, area,
+}: { toEmail: string; toName: string; area: string }) {
+  if (!process.env.RESEND_API_KEY) return;
+  const resend = new Resend(process.env.RESEND_API_KEY);
+  try {
+    await resend.emails.send({
+      from: FROM,
+      to: toEmail,
+      subject: "Müsahibəyə dəvət — OnkoDəstək 🎉",
+      html: `
+<div style="font-family:-apple-system,sans-serif;max-width:560px;margin:0 auto;padding:32px 24px;color:#1e293b;">
+  <div style="text-align:center;margin-bottom:28px;">
+    <div style="display:inline-block;background:linear-gradient(135deg,#1e3a5f,#0d9488);border-radius:16px;padding:14px 22px;">
+      <span style="color:white;font-size:18px;font-weight:800;">OnkoDəstək</span>
+    </div>
+  </div>
+  <h1 style="font-size:22px;font-weight:700;margin-bottom:8px;">Müsahibəyə dəvət alırsınız! 🎉</h1>
+  <p style="color:#475569;line-height:1.7;">Hörmətli ${toName},</p>
+  <p style="color:#475569;line-height:1.7;">
+    <strong>${area}</strong> sahəsindəki könüllü müraciətinizi nəzərdən keçirdik və sizi
+    müsahibəyə dəvət etmək istəyirik.
+  </p>
+  <div style="background:#fefce8;border:1px solid #fde68a;border-radius:12px;padding:20px 24px;margin:24px 0;">
+    <p style="margin:0 0 8px;font-weight:600;color:#92400e;">📅 Növbəti addım:</p>
+    <p style="margin:0;color:#78350f;font-size:14px;line-height:1.6;">
+      Komandamız 24–48 saat ərzində sizinlə əlaqə saxlayaraq müsahibənin tarix və vaxtını razılaşdıracaq.
+      Zəhmət olmasa bu emailə cavab verin və ya bizimlə əlaqə saxlayın.
+    </p>
+  </div>
+  <a href="mailto:info@onkodestek.az"
+     style="display:inline-block;background:#0d9488;color:white;text-decoration:none;
+            font-weight:600;font-size:14px;padding:12px 24px;border-radius:10px;margin-bottom:24px;">
+    Bizə cavab yaz →
+  </a>
+  <p style="color:#94a3b8;font-size:12px;border-top:1px solid #e2e8f0;padding-top:16px;">
+    OnkoDəstək — Azərbaycanda onkoloji xəstələrə şəffaf xeyriyyə platforması.<br>
+    <a href="${APP}" style="color:#0d9488;">onkodestek.vercel.app</a>
+  </p>
+</div>`,
+    });
+  } catch (err) { console.error("Interview invite email xətası:", err); }
+}
+
+export async function sendVolunteerAccepted({
+  toEmail, toName, area,
+}: { toEmail: string; toName: string; area: string }) {
+  if (!process.env.RESEND_API_KEY) return;
+  const resend = new Resend(process.env.RESEND_API_KEY);
+  try {
+    await resend.emails.send({
+      from: FROM,
+      to: toEmail,
+      subject: "Könüllü seçildiniz — OnkoDəstək 💙",
+      html: `
+<div style="font-family:-apple-system,sans-serif;max-width:560px;margin:0 auto;padding:32px 24px;color:#1e293b;">
+  <div style="text-align:center;margin-bottom:28px;">
+    <div style="display:inline-block;background:linear-gradient(135deg,#1e3a5f,#0d9488);border-radius:16px;padding:14px 22px;">
+      <span style="color:white;font-size:18px;font-weight:800;">OnkoDəstək</span>
+    </div>
+  </div>
+  <h1 style="font-size:22px;font-weight:700;margin-bottom:8px;">Xoş xəbər — siz könüllü seçildiniz! 💙</h1>
+  <p style="color:#475569;line-height:1.7;">Hörmətli ${toName},</p>
+  <p style="color:#475569;line-height:1.7;">
+    <strong>${area}</strong> sahəsindəki müraciətinizi qiymətləndirdik və sizi
+    <strong>OnkoDəstək könüllü komandası</strong>na qəbul etmək qərarına gəldik.
+  </p>
+  <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:12px;padding:20px 24px;margin:24px 0;">
+    <p style="margin:0 0 8px;font-weight:600;color:#166534;">✅ Növbəti addımlar:</p>
+    <p style="margin:0;color:#15803d;font-size:14px;line-height:1.7;">
+      Komandamız sizinlə əlaqə saxlayaraq fəaliyyət istiqamətləri, vəzifələr
+      və ilk görüş barədə məlumat verəcək. Bizimlə birlikdə daha çox insana çatacağıq!
+    </p>
+  </div>
+  <a href="mailto:info@onkodestek.az"
+     style="display:inline-block;background:#16a34a;color:white;text-decoration:none;
+            font-weight:600;font-size:14px;padding:12px 24px;border-radius:10px;margin-bottom:24px;">
+    Komanda ilə əlaqə →
+  </a>
+  <p style="color:#94a3b8;font-size:12px;border-top:1px solid #e2e8f0;padding-top:16px;">
+    OnkoDəstək — Azərbaycanda onkoloji xəstələrə şəffaf xeyriyyə platforması.<br>
+    <a href="${APP}" style="color:#0d9488;">onkodestek.vercel.app</a>
+  </p>
+</div>`,
+    });
+  } catch (err) { console.error("Accepted email xətası:", err); }
+}
+
+export async function sendVolunteerRejected({
+  toEmail, toName, area,
+}: { toEmail: string; toName: string; area: string }) {
+  if (!process.env.RESEND_API_KEY) return;
+  const resend = new Resend(process.env.RESEND_API_KEY);
+  try {
+    await resend.emails.send({
+      from: FROM,
+      to: toEmail,
+      subject: "Könüllü müraciətiniz haqqında — OnkoDəstək",
+      html: `
+<div style="font-family:-apple-system,sans-serif;max-width:560px;margin:0 auto;padding:32px 24px;color:#1e293b;">
+  <div style="text-align:center;margin-bottom:28px;">
+    <div style="display:inline-block;background:linear-gradient(135deg,#1e3a5f,#0d9488);border-radius:16px;padding:14px 22px;">
+      <span style="color:white;font-size:18px;font-weight:800;">OnkoDəstək</span>
+    </div>
+  </div>
+  <h1 style="font-size:22px;font-weight:700;margin-bottom:8px;">Müraciətiniz haqqında məlumat</h1>
+  <p style="color:#475569;line-height:1.7;">Hörmətli ${toName},</p>
+  <p style="color:#475569;line-height:1.7;">
+    <strong>${area}</strong> sahəsindəki könüllü müraciətiniz üçün təşəkkür edirik.
+    Bütün müraciətlər diqqətlə nəzərdən keçirildi. Təəssüf ki, bu dəfə
+    komandamıza uyğun yer tapa bilmədik.
+  </p>
+  <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:20px 24px;margin:24px 0;">
+    <p style="margin:0;color:#475569;font-size:14px;line-height:1.7;">
+      💙 Onkoloji xəstələrə dəstək olmaq istədiyiniz üçün çox minnətdarıq.
+      Gələcəkdə yeni könüllülük imkanları yarandığında sizinlə yenidən əlaqə saxlaya bilərik.
+      Bu arada platforma üzərindən xəstələrə birbaşa ianə edərək dəstək ola bilərsiniz.
+    </p>
+  </div>
+  <a href="${APP}/patients"
+     style="display:inline-block;background:#0d9488;color:white;text-decoration:none;
+            font-weight:600;font-size:14px;padding:12px 24px;border-radius:10px;margin-bottom:24px;">
+    Xəstələrə dəstək ol →
+  </a>
+  <p style="color:#94a3b8;font-size:12px;border-top:1px solid #e2e8f0;padding-top:16px;">
+    OnkoDəstək — Azərbaycanda onkoloji xəstələrə şəffaf xeyriyyə platforması.<br>
+    <a href="${APP}" style="color:#0d9488;">onkodestek.vercel.app</a>
+  </p>
+</div>`,
+    });
+  } catch (err) { console.error("Rejected email xətası:", err); }
+}
+
 export async function sendVolunteerConfirmation({
   toEmail,
   toName,
