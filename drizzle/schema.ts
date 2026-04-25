@@ -116,6 +116,16 @@ export const transactions = pgTable("transactions", {
   createdAt:       timestamp("created_at").notNull().defaultNow(),
 });
 
+// ── Patient Updates ───────────────────────────────────────────────────────────
+
+export const patientUpdates = pgTable("patient_updates", {
+  id:        serial("id").primaryKey(),
+  patientId: integer("patient_id").notNull().references(() => patients.id, { onDelete: "cascade" }),
+  content:   text("content").notNull(),
+  photoUrl:  text("photo_url"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
 // ── Volunteer Requests ────────────────────────────────────────────────────────
 
 export const volunteerRequests = pgTable("volunteer_requests", {

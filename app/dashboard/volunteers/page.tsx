@@ -1,9 +1,18 @@
-import { db } from "@/lib/db";
-import { volunteerRequests } from "@/drizzle/schema";
-import { desc } from "drizzle-orm";
+"use client";
+
+import { useState, useEffect, useCallback } from "react";
 import { formatDate } from "@/lib/utils";
 
-export const revalidate = 0;
+type Volunteer = {
+  id: number;
+  fullName: string;
+  email: string;
+  phone: string | null;
+  area: string;
+  message: string | null;
+  isReviewed: boolean;
+  createdAt: string;
+};
 
 const AREA_LABELS: Record<string, string> = {
   tibbi:     "Tibbi dəstək",
@@ -14,15 +23,33 @@ const AREA_LABELS: Record<string, string> = {
   digər:     "Digər",
 };
 
-export default async function VolunteersPage() {
-  let list: (typeof volunteerRequests.$inferSelect)[] = [];
+export default function VolunteersPage() {
+  const [list, setList]     = useState<Volunteer[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [toggling, setToggling] = useState<number | null>(null);
 
-  try {
-    list = await db
-      .select()
-      .from(volunteerRequests)
-      .orderBy(desc(volunteerRequests.createdAt));
-  } catch { /* DB bağlantısı yoxdursa boş göstər */ }
+  const load = useCallback(async () => {
+    setLoading(true);
+    const res = await fetch("/api/volunteer");
+    if (res.ok) setList(await res.json());
+    setLoading(false);
+  }, []);
+
+  useEffect(() => { load(); }, [load]);
+
+  async function toggleReviewed(id: number, current: boolean) {
+    setToggling(id);
+    const res = await fetch(`/api/admin/volunteers/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ isReviewed: !current }),
+    });
+    if (res.ok) {
+      const updated: Volunteer = await res.json();
+      setList((prev) => prev.map((v) => v.id === id ? updated : v));
+    }
+    setToggling(null);
+  }
 
   const newCount = list.filter((v) => !v.isReviewed).length;
 
@@ -42,16 +69,22 @@ export default async function VolunteersPage() {
         </div>
       </div>
 
-      {list.length === 0 ? (
+      {loading ? (
+        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-16 text-center">
+          <p className="text-slate-400 text-sm">Yüklənir...</p>
+        </div>
+      ) : list.length === 0 ? (
         <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-16 text-center">
           <p className="text-slate-400 text-sm">Hələlik könüllü müraciəti yoxdur.</p>
         </div>
       ) : (
         <div className="space-y-3">
           {list.map((v) => (
-            <div key={v.id} className={`bg-white rounded-2xl border shadow-sm p-5 ${v.isReviewed ? "border-slate-100" : "border-teal-200"}`}>
+            <div key={v.id} className={`bg-white rounded-2xl border shadow-sm p-5 transition-colors ${
+              v.isReviewed ? "border-slate-100" : "border-teal-200"
+            }`}>
               <div className="flex items-start justify-between gap-4">
-                <div className="flex-1">
+                <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap mb-1">
                     <p className="font-semibold text-slate-900">{v.fullName}</p>
                     <span className="text-xs font-medium bg-teal-50 text-teal-700 border border-teal-100 px-2 py-0.5 rounded-full">
@@ -71,7 +104,20 @@ export default async function VolunteersPage() {
                     <p className="text-sm text-slate-600 mt-2 leading-relaxed">{v.message}</p>
                   )}
                 </div>
-                <p className="text-xs text-slate-400 shrink-0">{formatDate(v.createdAt)}</p>
+                <div className="flex flex-col items-end gap-2 shrink-0">
+                  <p className="text-xs text-slate-400">{formatDate(v.createdAt)}</p>
+                  <button
+                    onClick={() => toggleReviewed(v.id, v.isReviewed)}
+                    disabled={toggling === v.id}
+                    className={`text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50 ${
+                      v.isReviewed
+                        ? "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                        : "bg-teal-600 text-white hover:bg-teal-700"
+                    }`}
+                  >
+                    {toggling === v.id ? "..." : v.isReviewed ? "Baxılmış" : "Baxıldı işarələ"}
+                  </button>
+                </div>
               </div>
             </div>
           ))}

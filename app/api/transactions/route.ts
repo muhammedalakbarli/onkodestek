@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { transactions, patients } from "@/drizzle/schema";
+import { transactions, patients, users } from "@/drizzle/schema";
 import { eq, sql } from "drizzle-orm";
 import { isAdmin } from "@/lib/adminAuth";
 import { TransactionCreateSchema } from "@/lib/schemas";
+import { sendDonationThankYou } from "@/lib/email";
 
 // GET /api/transactions — bütün əməliyyatları gətir (ictimai)
 export async function GET() {
@@ -38,13 +39,31 @@ export async function POST(req: NextRequest) {
     const [tx] = await db.insert(transactions).values(parsed.data).returning();
 
     if (tx.type === "donation") {
-      await db
+      const [patient] = await db
         .update(patients)
         .set({
           collectedAmount: sql`collected_amount + ${tx.amount}`,
           updatedAt: new Date(),
         })
-        .where(eq(patients.id, tx.patientId));
+        .where(eq(patients.id, tx.patientId))
+        .returning({ fullName: patients.fullName, id: patients.id });
+
+      // E-poçt bildirişi — donor login olmuşdursa
+      if (tx.donorUserId && patient) {
+        const [donor] = await db
+          .select({ email: users.email, name: users.name })
+          .from(users)
+          .where(eq(users.id, tx.donorUserId));
+        if (donor?.email) {
+          sendDonationThankYou({
+            toEmail: donor.email,
+            toName: donor.name ?? "İanəçi",
+            patientName: patient.fullName,
+            amount: String(tx.amount),
+            patientId: patient.id,
+          }).catch(console.error);
+        }
+      }
     }
 
     return NextResponse.json(tx, { status: 201 });

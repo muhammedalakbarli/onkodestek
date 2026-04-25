@@ -9,8 +9,8 @@ import ShareButtons from "@/components/ShareButtons";
 import Footer from "@/components/Footer";
 import { Heart, Receipt } from "lucide-react";
 import { db } from "@/lib/db";
-import { patients, transactions } from "@/drizzle/schema";
-import { eq } from "drizzle-orm";
+import { patients, transactions, patientUpdates } from "@/drizzle/schema";
+import { eq, desc } from "drizzle-orm";
 import { formatCurrency, formatDate, calcProgress } from "@/lib/utils";
 
 export const revalidate = 60;
@@ -89,6 +89,7 @@ export default async function PatientPage({
 
   let patient;
   let txList: (typeof transactions.$inferSelect)[] = [];
+  let updates: (typeof patientUpdates.$inferSelect)[] = [];
 
   try {
     [patient] = await db
@@ -98,11 +99,14 @@ export default async function PatientPage({
 
     if (!patient) notFound();
 
-    txList = await db
-      .select()
-      .from(transactions)
-      .where(eq(transactions.patientId, patient.id))
-      .orderBy(transactions.createdAt);
+    [txList, updates] = await Promise.all([
+      db.select().from(transactions)
+        .where(eq(transactions.patientId, patient.id))
+        .orderBy(transactions.createdAt),
+      db.select().from(patientUpdates)
+        .where(eq(patientUpdates.patientId, patient.id))
+        .orderBy(desc(patientUpdates.createdAt)),
+    ]);
   } catch {
     notFound();
   }
@@ -318,6 +322,31 @@ export default async function PatientPage({
             </div>
           </div>
         </div>
+        {/* ── Xəstə yenilikləri ───────────────────────────────────────────── */}
+        {updates.length > 0 && (
+          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+            <div className="px-5 py-4 border-b border-slate-50">
+              <h2 className="font-bold text-slate-900">Yeniliklər</h2>
+              <p className="text-xs text-slate-400 mt-0.5">Müalicə prosesi haqqında son məlumatlar</p>
+            </div>
+            <div className="divide-y divide-slate-50">
+              {updates.map((u) => (
+                <div key={u.id} className="px-5 py-4">
+                  <p className="text-sm text-slate-700 leading-relaxed">{u.content}</p>
+                  {u.photoUrl && (
+                    <a href={u.photoUrl} target="_blank" rel="noopener noreferrer"
+                       className="inline-block mt-2">
+                      <img src={u.photoUrl} alt="Yenilik şəkli"
+                           className="rounded-xl max-h-48 object-cover border border-slate-100" />
+                    </a>
+                  )}
+                  <p className="text-xs text-slate-400 mt-2">{formatDate(u.createdAt)}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
       </main>
       <Footer />
     </>
