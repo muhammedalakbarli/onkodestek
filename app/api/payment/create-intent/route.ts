@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
     const intent = await stripe.paymentIntents.create({
       amount: parsed.data.amount,
       currency: "azn",
-      automatic_payment_methods: { enabled: true },
+      payment_method_types: ["card"],
       metadata: { type: "platform_donation" },
     });
     return NextResponse.json({ clientSecret: intent.client_secret });

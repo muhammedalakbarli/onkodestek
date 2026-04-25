@@ -250,8 +250,8 @@ function PaymentForm({ amount, onBack }: { amount: number; onBack: () => void })
         <p className="text-sm font-semibold text-slate-700 mb-2">Kart məlumatları</p>
         <PaymentElement
           options={{
-            layout: "tabs",
-            fields: { billingDetails: { name: "auto" } },
+            layout: "accordion",
+            defaultValues: { billingDetails: { name: "" } },
           }}
         />
       </div>
