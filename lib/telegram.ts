@@ -3,7 +3,7 @@ import { db } from "@/lib/db";
 import { patients } from "@/drizzle/schema";
 import { eq } from "drizzle-orm";
 
-export const bot = new Bot(process.env.TELEGRAM_BOT_TOKEN!);
+export const bot = new Bot(process.env.TELEGRAM_BOT_TOKEN ?? "placeholder");
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://onkodestek.vercel.app";
 

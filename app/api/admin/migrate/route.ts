@@ -66,5 +66,19 @@ export async function GET(req: NextRequest) {
     results.push(`audit_logs: XƏTA — ${err}`);
   }
 
+  // bot_sessions cədvəli (Telegram webhook sessionları üçün)
+  try {
+    await db.execute(sql`
+      CREATE TABLE IF NOT EXISTS bot_sessions (
+        key        TEXT PRIMARY KEY,
+        value      TEXT NOT NULL,
+        updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+      )
+    `);
+    results.push("bot_sessions: OK");
+  } catch (err) {
+    results.push(`bot_sessions: XƏTA — ${err}`);
+  }
+
   return NextResponse.json({ done: true, results });
 }

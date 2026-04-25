@@ -152,6 +152,14 @@ export const platformDonations = pgTable("platform_donations", {
   createdAt:   timestamp("created_at").notNull().defaultNow(),
 });
 
+// ── Telegram Bot Sessions ────────────────────────────────────────────────────
+
+export const botSessions = pgTable("bot_sessions", {
+  key:       text("key").primaryKey(),  // "chat:userId"
+  value:     text("value").notNull(),   // JSON serialized session
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
 // ── Audit Log ────────────────────────────────────────────────────────────────
 
 export const auditLogs = pgTable("audit_logs", {
