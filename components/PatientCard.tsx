@@ -27,7 +27,7 @@ function getAvatarColor(name: string): string {
   return AVATAR_COLORS[idx];
 }
 
-export default function PatientCard({ patient }: { patient: Patient }) {
+export default function PatientCard({ patient, isGuest }: { patient: Patient; isGuest?: boolean }) {
   const status = STATUS_CONFIG[patient.status] ?? STATUS_CONFIG.pending;
   const pct = calcProgress(patient.collectedAmount, patient.goalAmount);
   const avatarColor = getAvatarColor(patient.fullName);
@@ -47,17 +47,17 @@ export default function PatientCard({ patient }: { patient: Patient }) {
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={patient.photoUrl}
-                alt={patient.fullName}
-                className="w-12 h-12 rounded-xl object-cover shrink-0 shadow-sm"
+                alt=""
+                className={`w-12 h-12 rounded-xl object-cover shrink-0 shadow-sm transition-all ${isGuest ? "blur-md" : ""}`}
               />
             ) : (
               <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${avatarColor} flex items-center justify-center text-white font-bold text-lg shrink-0 shadow-sm`}>
-                {patient.fullName.charAt(0)}
+                {isGuest ? "?" : patient.fullName.charAt(0)}
               </div>
             )}
             <div className="flex-1 min-w-0">
               <div className="flex items-start justify-between gap-2">
-                <p className="font-semibold text-slate-900 leading-snug group-hover:text-blue-700 transition-colors">
+                <p className={`font-semibold text-slate-900 leading-snug group-hover:text-blue-700 transition-colors select-none ${isGuest ? "blur-sm" : ""}`}>
                   {patient.fullName}
                 </p>
                 <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full border shrink-0 flex items-center gap-1 ${status.badge}`}>
@@ -65,13 +65,15 @@ export default function PatientCard({ patient }: { patient: Patient }) {
                   {status.label}
                 </span>
               </div>
-              <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">{patient.diagnosis}</p>
+              <p className={`text-xs text-slate-500 mt-0.5 leading-relaxed select-none ${isGuest ? "blur-sm" : ""}`}>
+                {patient.diagnosis}
+              </p>
             </div>
           </div>
 
           {/* Hekayə */}
           {patient.story && (
-            <p className="text-sm text-slate-600 leading-relaxed line-clamp-2 flex-1">
+            <p className={`text-sm text-slate-600 leading-relaxed line-clamp-2 flex-1 select-none ${isGuest ? "blur-sm" : ""}`}>
               {patient.story}
             </p>
           )}

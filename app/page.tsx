@@ -3,6 +3,7 @@ import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import PatientCard from "@/components/PatientCard";
 import StatCard from "@/components/StatCard";
+import RecentDonorsFeed from "@/components/RecentDonorsFeed";
 import { db } from "@/lib/db";
 import { patients, transactions } from "@/drizzle/schema";
 import { eq, sql, sum } from "drizzle-orm";
@@ -456,6 +457,7 @@ export default async function HomePage() {
           </div>
         </div>
       </footer>
+      <RecentDonorsFeed />
     </>
   );
 }

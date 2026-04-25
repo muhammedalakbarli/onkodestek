@@ -6,6 +6,7 @@ import { db } from "@/lib/db";
 import { patients } from "@/drizzle/schema";
 import type { Patient } from "@/drizzle/schema";
 import { eq } from "drizzle-orm";
+import { auth } from "@/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -15,6 +16,9 @@ export const metadata = {
 };
 
 export default async function PatientsPage() {
+  const session = await auth();
+  const isGuest = !session?.user;
+
   let list: Patient[] = [];
   try {
     list = await db
@@ -77,7 +81,7 @@ export default async function PatientsPage() {
             </a>
           </div>
         ) : (
-          <PatientFilter patients={list} />
+          <PatientFilter patients={list} isGuest={isGuest} />
         )}
       </main>
       <Footer />

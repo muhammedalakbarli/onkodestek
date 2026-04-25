@@ -60,9 +60,24 @@ export async function POST(req: NextRequest) {
           [{ text: "📋 Yardım müraciəti", url: `${APP}/apply` }],
           [{ text: "💙 Psixoloji dəstək", callback_data: "support" }],
           [{ text: "🔍 Müraciəti izlə", callback_data: "track_prompt" }],
+          [{ text: "🔔 Bildirişlərə abunə ol", callback_data: "subscribe" }],
           [{ text: "ℹ️ Haqqımızda", callback_data: "about" }],
         )}
       );
+
+    } else if (text.startsWith("/abune")) {
+      try {
+        const { db } = await import("@/lib/db");
+        const { botSessions } = await import("@/drizzle/schema");
+        const key = `subscriber:${chatId}`;
+        await db.insert(botSessions).values({ key, value: "1", updatedAt: new Date() })
+          .onConflictDoUpdate({ target: botSessions.key, set: { value: "1", updatedAt: new Date() } });
+        await sendMessage(token, chatId,
+          `🔔 Abunə oldunuz!\n\nYeni xəstə əlavə olunanda sizə bildiriş göndərəcəyik.`
+        );
+      } catch {
+        await sendMessage(token, chatId, `🔔 Abunəlik qeydə alındı!`);
+      }
 
     } else if (text.startsWith("/izle ")) {
       const trackId = text.slice(6).trim().toUpperCase();
@@ -112,7 +127,19 @@ export async function POST(req: NextRequest) {
 
     if (!chatId) return NextResponse.json({ ok: true });
 
-    if (data === "about") {
+    if (data === "subscribe") {
+      try {
+        const { db } = await import("@/lib/db");
+        const { botSessions } = await import("@/drizzle/schema");
+        const key = `subscriber:${chatId}`;
+        await db.insert(botSessions).values({ key, value: "1", updatedAt: new Date() })
+          .onConflictDoUpdate({ target: botSessions.key, set: { value: "1", updatedAt: new Date() } });
+      } catch {}
+      await sendMessage(token, chatId,
+        `🔔 <b>Abunə oldunuz!</b>\n\nYeni xəstə əlavə olunanda sizə bildiriş göndərəcəyik.\n\nAbunəliyi dayandırmaq: /abune_sil`
+      );
+
+    } else if (data === "about") {
       await sendMessage(token, chatId,
         `ℹ️ <b>OnkoDəstək haqqında</b>\n\n` +
         `✅ Hər xəstə sənəd yoxlamasından keçir\n` +

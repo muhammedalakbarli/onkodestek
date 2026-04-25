@@ -9,17 +9,27 @@ const PAGE_SIZE = 12;
 const STATUS_FILTERS = [
   { value: "all",    label: "Hamısı" },
   { value: "active", label: "Aktiv" },
+  { value: "urgent", label: "🔴 Tez çatan" },
   { value: "funded", label: "Tamamlandı" },
 ];
 
-export default function PatientFilter({ patients }: { patients: Patient[] }) {
+export default function PatientFilter({ patients, isGuest }: { patients: Patient[]; isGuest?: boolean }) {
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("all");
   const [page, setPage]     = useState(1);
 
   const filtered = useMemo(() => {
     return patients.filter((p) => {
-      const matchStatus = status === "all" || p.status === status;
+      const pct = parseFloat(String(p.goalAmount)) > 0
+        ? parseFloat(String(p.collectedAmount)) / parseFloat(String(p.goalAmount))
+        : 0;
+      const isUrgent = p.status === "active" && pct >= 0.7;
+
+      const matchStatus =
+        status === "all"    ? true :
+        status === "urgent" ? isUrgent :
+        p.status === status;
+
       const q = search.toLowerCase();
       const matchSearch =
         !q ||
@@ -86,7 +96,7 @@ export default function PatientFilter({ patients }: { patients: Patient[] }) {
         <>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {paginated.map((p) => (
-              <PatientCard key={p.id} patient={p} />
+              <PatientCard key={p.id} patient={p} isGuest={isGuest} />
             ))}
           </div>
 

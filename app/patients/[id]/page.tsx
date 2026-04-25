@@ -12,6 +12,7 @@ import { db } from "@/lib/db";
 import { patients, transactions, patientUpdates } from "@/drizzle/schema";
 import { eq, desc } from "drizzle-orm";
 import { formatCurrency, formatDate, calcProgress } from "@/lib/utils";
+import { auth } from "@/auth";
 
 export const revalidate = 60;
 
@@ -86,6 +87,8 @@ export default async function PatientPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const session = await auth();
+  const isGuest = !session?.user;
 
   let patient;
   let txList: (typeof transactions.$inferSelect)[] = [];
@@ -146,21 +149,56 @@ export default async function PatientPage({
           <div className={`h-2 w-full bg-gradient-to-r ${pct >= 100 ? "from-emerald-400 to-emerald-600" : "from-blue-500 to-violet-500"}`} />
 
           <div className="p-6 md:p-8">
+            {/* Guest blur overlay */}
+            {isGuest && (
+              <div className="mb-6 bg-blue-50 border border-blue-200 rounded-xl px-5 py-4 flex items-center gap-4">
+                <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center shrink-0">
+                  <svg className="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-blue-900">Tam məlumatlar gizlidir</p>
+                  <p className="text-xs text-blue-600 mt-0.5">Xəstənin adını, şəklini və hekayəsini görmək üçün daxil olun.</p>
+                </div>
+                <Link
+                  href={`/login?callbackUrl=/patients/${patient.id}`}
+                  className="shrink-0 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition-colors"
+                >
+                  Daxil ol
+                </Link>
+              </div>
+            )}
+
             <div className="flex items-start gap-5">
               {patient.photoUrl ? (
-                <PhotoLightbox
-                  src={patient.photoUrl}
-                  alt={patient.fullName}
-                  className="w-16 h-16 rounded-2xl object-cover shrink-0 shadow-md"
-                />
+                isGuest ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <div className="w-16 h-16 rounded-2xl shrink-0 shadow-md overflow-hidden relative">
+                    <img src={patient.photoUrl} alt="" className="w-full h-full object-cover blur-md scale-110" />
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                      <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                      </svg>
+                    </div>
+                  </div>
+                ) : (
+                  <PhotoLightbox
+                    src={patient.photoUrl}
+                    alt={patient.fullName}
+                    className="w-16 h-16 rounded-2xl object-cover shrink-0 shadow-md"
+                  />
+                )
               ) : (
                 <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${avatarColor} flex items-center justify-center text-white font-extrabold text-2xl shrink-0 shadow-md`}>
-                  {patient.fullName.charAt(0)}
+                  {isGuest ? "?" : patient.fullName.charAt(0)}
                 </div>
               )}
               <div className="flex-1 min-w-0">
                 <div className="flex flex-wrap items-center gap-2 mb-1">
-                  <h1 className="text-2xl font-bold text-slate-900">{patient.fullName}</h1>
+                  <h1 className={`text-2xl font-bold text-slate-900 select-none ${isGuest ? "blur-sm" : ""}`}>
+                    {patient.fullName}
+                  </h1>
                   {patient.age && (
                     <span className="text-sm text-slate-400 font-normal">{patient.age} yaş</span>
                   )}
@@ -168,13 +206,17 @@ export default async function PatientPage({
                     {status.label}
                   </span>
                 </div>
-                <p className="text-slate-600 font-medium">{patient.diagnosis}</p>
+                <p className={`text-slate-600 font-medium select-none ${isGuest ? "blur-sm" : ""}`}>
+                  {patient.diagnosis}
+                </p>
                 {patient.hospitalName && (
                   <div className="flex items-center gap-1.5 mt-2">
                     <svg className="w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                     </svg>
-                    <span className="text-sm text-slate-500">{patient.hospitalName}</span>
+                    <span className={`text-sm text-slate-500 select-none ${isGuest ? "blur-sm" : ""}`}>
+                      {patient.hospitalName}
+                    </span>
                   </div>
                 )}
               </div>
@@ -182,7 +224,9 @@ export default async function PatientPage({
 
             {patient.story && (
               <div className="mt-6 p-4 bg-slate-50 rounded-xl border border-slate-100">
-                <p className="text-slate-600 text-sm leading-relaxed italic">"{patient.story}"</p>
+                <p className={`text-slate-600 text-sm leading-relaxed italic select-none ${isGuest ? "blur-sm" : ""}`}>
+                  &quot;{patient.story}&quot;
+                </p>
               </div>
             )}
 
@@ -235,7 +279,26 @@ export default async function PatientPage({
         </div>
 
         {/* ── İanə və xərc siyahıları ─────────────────────────────────────── */}
-        <div className="grid md:grid-cols-2 gap-5">
+        <div className={`grid md:grid-cols-2 gap-5 ${isGuest ? "relative" : ""}`}>
+          {isGuest && (
+            <div className="absolute inset-0 z-10 backdrop-blur-sm bg-white/60 rounded-2xl flex flex-col items-center justify-center gap-3">
+              <div className="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center">
+                <svg className="w-6 h-6 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </div>
+              <div className="text-center">
+                <p className="text-sm font-semibold text-slate-700">İanəçi məlumatları gizlidir</p>
+                <p className="text-xs text-slate-400 mt-0.5">Görmək üçün daxil olun</p>
+              </div>
+              <Link
+                href={`/login?callbackUrl=/patients/${patient.id}`}
+                className="bg-slate-900 hover:bg-slate-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl transition-colors"
+              >
+                Daxil ol →
+              </Link>
+            </div>
+          )}
 
           {/* İanələr */}
           <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
@@ -323,7 +386,7 @@ export default async function PatientPage({
           </div>
         </div>
         {/* ── Xəstə yenilikləri ───────────────────────────────────────────── */}
-        {updates.length > 0 && (
+        {!isGuest && updates.length > 0 && (
           <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
             <div className="px-5 py-4 border-b border-slate-50">
               <h2 className="font-bold text-slate-900">Yeniliklər</h2>
