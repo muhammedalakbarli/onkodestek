@@ -1,7 +1,14 @@
-import { auth, signIn } from "@/auth";
+import { auth, signIn, signOut } from "@/auth";
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
+import { signAdminToken, COOKIE_NAME, TOKEN_TTL } from "@/lib/auth";
 import Image from "next/image";
 import Link from "next/link";
+
+const ADMIN_EMAILS = (process.env.ADMIN_EMAILS ?? "")
+  .split(",")
+  .map((e) => e.trim().toLowerCase())
+  .filter(Boolean);
 
 export default async function LoginPage({
   searchParams,
@@ -11,16 +18,91 @@ export default async function LoginPage({
   const session = await auth();
   const { callbackUrl, error } = await searchParams;
 
-  // Artıq daxil olubsa yönləndir
-  if (session?.user) {
-    redirect(session.user.role === "admin" ? "/dashboard" : "/me");
+  // ── Admin session varsa — seçim göstər ──────────────────────────────────────
+  if (session?.user?.role === "admin") {
+    async function grantAdmin() {
+      "use server";
+      const s = await auth();
+      const em = s?.user?.email?.toLowerCase() ?? "";
+      if (!ADMIN_EMAILS.includes(em)) return;
+      const token = await signAdminToken();
+      const jar   = await cookies();
+      jar.set(COOKIE_NAME, token, {
+        httpOnly: true,
+        secure:   process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge:   TOKEN_TTL,
+        path:     "/",
+      });
+      redirect("/dashboard");
+    }
+
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center px-6">
+        <div className="w-full max-w-sm">
+          {/* Logo */}
+          <div className="flex flex-col items-center mb-8">
+            <Image src="/logo.jpeg" alt="onkodəstək" width={52} height={52} className="rounded-2xl object-contain mb-4" />
+            <h1 className="text-2xl font-bold text-slate-900">Xoş gəldiniz</h1>
+            <p className="text-slate-500 text-sm mt-1">{session.user.name ?? session.user.email}</p>
+          </div>
+
+          <p className="text-xs text-slate-400 text-center mb-4 uppercase tracking-wide font-semibold">
+            Daxil olmaq istədiyiniz paneli seçin
+          </p>
+
+          <div className="space-y-3">
+            {/* Admin paneli */}
+            <form action={grantAdmin}>
+              <button
+                type="submit"
+                className="w-full flex items-center justify-center gap-2.5 bg-slate-900 hover:bg-slate-700 text-white font-semibold py-3.5 rounded-xl text-sm transition-colors"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18" />
+                </svg>
+                Admin paneli
+              </button>
+            </form>
+
+            {/* İstifadəçi kimi */}
+            <a
+              href={callbackUrl ?? "/patients"}
+              className="w-full flex items-center justify-center gap-2.5 border-2 border-slate-200 hover:border-teal-400 hover:bg-teal-50/30 text-slate-700 hover:text-teal-700 font-semibold py-3.5 rounded-xl text-sm transition-all"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+              İstifadəçi kimi davam et
+            </a>
+          </div>
+
+          {/* Çıxış */}
+          <form action={async () => {
+            "use server";
+            await signOut({ redirectTo: "/login" });
+          }} className="mt-5 text-center">
+            <button type="submit" className="text-xs text-slate-400 hover:text-red-500 transition-colors">
+              Başqa hesabla daxil ol
+            </button>
+          </form>
+        </div>
+      </div>
+    );
   }
 
+  // ── Normal donor — artıq daxil olub ─────────────────────────────────────────
+  if (session?.user) {
+    redirect(callbackUrl ?? "/patients");
+  }
+
+  // ── Giriş formu ─────────────────────────────────────────────────────────────
   const errorMessages: Record<string, string> = {
-    OAuthSignin:    "Giriş zamanı xəta baş verdi. Yenidən cəhd edin.",
-    OAuthCallback:  "Google ilə əlaqə qurularkən xəta baş verdi.",
+    OAuthSignin:        "Giriş zamanı xəta baş verdi. Yenidən cəhd edin.",
+    OAuthCallback:      "Google ilə əlaqə qurularkən xəta baş verdi.",
     OAuthCreateAccount: "Hesab yaradılarkən xəta baş verdi.",
-    Default:        "Giriş uğursuz oldu. Zəhmət olmasa yenidən cəhd edin.",
+    Unauthorized:       "Bu hesabın admin icazəsi yoxdur.",
+    Default:            "Giriş uğursuz oldu. Zəhmət olmasa yenidən cəhd edin.",
   };
 
   return (
@@ -28,12 +110,10 @@ export default async function LoginPage({
 
       {/* Sol panel — brend */}
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-900 via-teal-800 to-blue-900 flex-col justify-between p-12 relative overflow-hidden">
-        {/* Fon naxışı */}
         <div className="absolute inset-0 hero-pattern opacity-30 pointer-events-none" />
         <div className="absolute -top-20 -right-20 w-72 h-72 bg-teal-400/10 rounded-full blur-3xl" />
         <div className="absolute -bottom-20 -left-20 w-72 h-72 bg-teal-500/15 rounded-full blur-3xl" />
 
-        {/* Logo */}
         <div className="relative flex items-center gap-3">
           <Image src="/logo.jpeg" alt="onkodəstək" width={44} height={44} className="rounded-xl object-contain" />
           <div>
@@ -42,7 +122,6 @@ export default async function LoginPage({
           </div>
         </div>
 
-        {/* Orta mətn */}
         <div className="relative">
           <h2 className="text-3xl font-extrabold leading-tight mb-4">
             <span className="bg-gradient-to-r from-teal-300 to-blue-200 bg-clip-text text-transparent">Şəffaf yardım,</span>
@@ -71,9 +150,7 @@ export default async function LoginPage({
           </div>
         </div>
 
-        <p className="relative text-teal-300/70 text-xs">
-          © 2026 onkodəstək
-        </p>
+        <p className="relative text-teal-300/70 text-xs">© 2026 onkodəstək</p>
       </div>
 
       {/* Sağ panel — form */}
@@ -102,7 +179,7 @@ export default async function LoginPage({
             </div>
           )}
 
-          {/* Google giriş düyməsi */}
+          {/* Google — istifadəçi girişi */}
           <form action={async () => {
             "use server";
             await signIn("google", { redirectTo: callbackUrl ?? "/patients" });
@@ -136,7 +213,7 @@ export default async function LoginPage({
             <p className="text-xs text-slate-400 text-center mt-2">Müraciət etmək üçün giriş tələb olunur</p>
           </div>
 
-          {/* Xəstə izləmə bölməsi */}
+          {/* Müraciət izlə */}
           <div className="mt-8 pt-7 border-t border-slate-100">
             <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-4 text-center">
               Müraciətin statusunu izlə
@@ -160,6 +237,21 @@ export default async function LoginPage({
               <p className="text-xs text-slate-400 mt-2">
                 İzləmə kodunu müraciət etdikdən sonra alırsınız
               </p>
+            </form>
+          </div>
+
+          {/* Admin girişi */}
+          <div className="mt-6 pt-5 border-t border-slate-100 text-center">
+            <form action={async () => {
+              "use server";
+              await signIn("google", { redirectTo: "/api/auth/promote-admin" });
+            }}>
+              <button
+                type="submit"
+                className="text-xs text-slate-400 hover:text-slate-700 transition-colors font-medium"
+              >
+                Admin paneli →
+              </button>
             </form>
           </div>
         </div>
