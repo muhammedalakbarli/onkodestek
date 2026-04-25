@@ -3,7 +3,7 @@ import { isAdmin } from "@/lib/adminAuth";
 import { sql } from "drizzle-orm";
 import { db } from "@/lib/db";
 
-// Bir dəfəlik migration: patient_updates cədvəlini yarat
+// Bir dəfəlik migration: yeni sütunları yarat
 // İstifadədən sonra bu faylı silin
 export async function GET(req: NextRequest) {
   if (!(await isAdmin(req))) {
@@ -12,6 +12,7 @@ export async function GET(req: NextRequest) {
 
   const results: string[] = [];
 
+  // patient_updates cədvəli
   try {
     await db.execute(sql`
       CREATE TABLE IF NOT EXISTS patient_updates (
@@ -25,6 +26,26 @@ export async function GET(req: NextRequest) {
     results.push("patient_updates: OK");
   } catch (err) {
     results.push(`patient_updates: XƏTA — ${err}`);
+  }
+
+  // volunteer_requests-ə cv_url sütunu
+  try {
+    await db.execute(sql`
+      ALTER TABLE volunteer_requests ADD COLUMN IF NOT EXISTS cv_url TEXT
+    `);
+    results.push("volunteer_requests.cv_url: OK");
+  } catch (err) {
+    results.push(`volunteer_requests.cv_url: XƏTA — ${err}`);
+  }
+
+  // volunteer_requests-ə admin_note sütunu
+  try {
+    await db.execute(sql`
+      ALTER TABLE volunteer_requests ADD COLUMN IF NOT EXISTS admin_note TEXT
+    `);
+    results.push("volunteer_requests.admin_note: OK");
+  } catch (err) {
+    results.push(`volunteer_requests.admin_note: XƏTA — ${err}`);
   }
 
   return NextResponse.json({ done: true, results });

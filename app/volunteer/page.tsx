@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import VolunteerForm from "./VolunteerForm";
+import VolunteerForm from "@/components/volunteer/VolunteerForm";
 
 export const metadata: Metadata = {
   title: "Könüllü ol — onkodəstək",

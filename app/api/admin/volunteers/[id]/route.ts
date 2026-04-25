@@ -12,10 +12,13 @@ export async function PATCH(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   const { id } = await params;
-  const { isReviewed } = await req.json();
+  const body = await req.json();
+  const patch: Record<string, unknown> = {};
+  if ("isReviewed" in body) patch.isReviewed = Boolean(body.isReviewed);
+  if ("adminNote"  in body) patch.adminNote  = body.adminNote ?? null;
   const [updated] = await db
     .update(volunteerRequests)
-    .set({ isReviewed: Boolean(isReviewed) })
+    .set(patch)
     .where(eq(volunteerRequests.id, parseInt(id)))
     .returning();
   if (!updated) return NextResponse.json({ error: "Tapılmadı" }, { status: 404 });

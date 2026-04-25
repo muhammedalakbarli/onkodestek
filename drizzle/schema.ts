@@ -135,7 +135,9 @@ export const volunteerRequests = pgTable("volunteer_requests", {
   phone:      varchar("phone", { length: 50 }),
   area:       varchar("area", { length: 100 }).notNull(),
   message:    text("message"),
+  cvUrl:      text("cv_url"),
   isReviewed: boolean("is_reviewed").notNull().default(false),
+  adminNote:  text("admin_note"),
   createdAt:  timestamp("created_at").notNull().defaultNow(),
 });
 
