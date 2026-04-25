@@ -11,7 +11,12 @@ export default function LoginForm({ callbackUrl }: { callbackUrl?: string }) {
   async function handleGoogle() {
     if (!agreed || loading) return;
     setLoading(true);
-    await signIn("google", { callbackUrl: callbackUrl ?? "/patients" });
+    // Həmişə /login-ə qayıt — orada admin/user seçimi aparılır.
+    // Əgər orijinal callbackUrl varsa, query param kimi ötür.
+    const loginCallback = callbackUrl
+      ? `/login?callbackUrl=${encodeURIComponent(callbackUrl)}`
+      : "/login";
+    await signIn("google", { callbackUrl: loginCallback });
   }
 
   return (
