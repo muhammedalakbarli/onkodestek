@@ -47,6 +47,7 @@ export default function VolunteerForm() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!form.area) { setErrorMsg("Zəhmət olmasa bir sahə seçin."); return; }
+    if (!cvFile) { setErrorMsg("Zəhmət olmasa CV və ya müraciət məktubunu yükləyin."); return; }
     setStatus("loading");
     setErrorMsg("");
 
@@ -185,7 +186,7 @@ export default function VolunteerForm() {
 
         {/* CV yükləmə */}
         <div>
-          <label className="block text-xs font-semibold text-slate-600 mb-1.5">CV / Müraciət məktubu <span className="text-slate-400 font-normal">(istəyə görə)</span></label>
+          <label className="block text-xs font-semibold text-slate-600 mb-1.5">CV / Müraciət məktubu <span className="text-red-500">*</span></label>
           <div
             onClick={() => fileRef.current?.click()}
             className={`flex items-center gap-3 border-2 border-dashed rounded-xl px-4 py-3.5 cursor-pointer transition-colors ${
@@ -219,7 +220,7 @@ export default function VolunteerForm() {
           <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl px-4 py-2.5">{errorMsg}</p>
         )}
 
-        <button type="submit" disabled={isLoading || !form.area}
+        <button type="submit" disabled={isLoading || !form.area || !cvFile}
           className="w-full bg-gradient-to-r from-blue-600 to-teal-600 text-white font-semibold py-3 rounded-xl text-sm hover:opacity-90 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm">
           {uploading ? "CV yüklənir..." : isLoading ? "Göndərilir..." : "Müraciət göndər"}
         </button>
