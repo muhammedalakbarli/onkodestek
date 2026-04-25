@@ -49,6 +49,8 @@ export const users = pgTable("users", {
   image:         text("image"),
   role:          userRoleEnum("role").notNull().default("donor"),
   createdAt:     timestamp("created_at").notNull().defaultNow(),
+  bannedUntil:   timestamp("banned_until"),
+  banReason:     text("ban_reason"),
 });
 
 export const accounts = pgTable("accounts", {

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 import { auth } from "@/auth";
+import type { Session } from "next-auth";
 
 const DASHBOARD_SECRET = new TextEncoder().encode(process.env.ADMIN_SECRET ?? "fallback");
 const DASHBOARD_COOKIE = "onko_admin_token";
@@ -14,6 +15,7 @@ export async function middleware(req: NextRequest) {
   if (pathname.startsWith("/api/admin/magic"))   return NextResponse.next();
   if (pathname.startsWith("/api/admin/send-magic")) return NextResponse.next();
   if (pathname === "/login")               return NextResponse.next();
+  if (pathname === "/banned")              return NextResponse.next();
   if (pathname === "/dashboard/login")     return NextResponse.next();
 
   // ── Dashboard: JWT cookie qoruması ───────────────────────────────────────
@@ -32,9 +34,22 @@ export async function middleware(req: NextRequest) {
     }
   }
 
+  // ── Session (API routeları üçün yoxdur) ─────────────────────────────────
+  let session: Session | null = null;
+  if (!pathname.startsWith("/api/")) {
+    session = await auth();
+
+    // Ban yoxlaması
+    if (session?.user?.bannedUntil) {
+      const until = new Date(session.user.bannedUntil);
+      if (until > new Date()) {
+        return NextResponse.redirect(new URL("/banned", req.url));
+      }
+    }
+  }
+
   // ── Ana səhifə: sessiya olmadan login-ə yönləndir ────────────────────────
   if (pathname === "/") {
-    // Admin JWT cookie ilə giriş icazəsi
     const adminToken = req.cookies.get(DASHBOARD_COOKIE)?.value;
     if (adminToken) {
       try {
@@ -42,7 +57,6 @@ export async function middleware(req: NextRequest) {
         return NextResponse.next();
       } catch {}
     }
-    const session = await auth();
     if (!session?.user) {
       return NextResponse.redirect(new URL("/login", req.url));
     }
@@ -51,7 +65,6 @@ export async function middleware(req: NextRequest) {
 
   // ── Əməliyyat səhifələri: mütləq login tələb olunur ─────────────────────
   if (pathname.startsWith("/apply") || pathname.startsWith("/me")) {
-    const session = await auth();
     if (!session?.user) {
       const loginUrl = new URL("/login", req.url);
       loginUrl.searchParams.set("callbackUrl", pathname);

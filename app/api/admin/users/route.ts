@@ -17,6 +17,8 @@ export async function GET(req: NextRequest) {
       image:         users.image,
       role:          users.role,
       createdAt:     users.createdAt,
+      bannedUntil:   users.bannedUntil,
+      banReason:     users.banReason,
       donationCount: sql<number>`cast(count(${transactions.id}) filter (where ${transactions.type} = 'donation') as int)`,
       donationTotal: sql<string>`coalesce(sum(${transactions.amount}) filter (where ${transactions.type} = 'donation'), '0')`,
     })

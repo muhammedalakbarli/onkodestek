@@ -91,5 +91,24 @@ export async function GET(req: NextRequest) {
     results.push(`volunteer_requests.status: XƏTA — ${err}`);
   }
 
+  // users-ə ban sütunları
+  try {
+    await db.execute(sql`
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS banned_until TIMESTAMP
+    `);
+    results.push("users.banned_until: OK");
+  } catch (err) {
+    results.push(`users.banned_until: XƏTA — ${err}`);
+  }
+
+  try {
+    await db.execute(sql`
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS ban_reason TEXT
+    `);
+    results.push("users.ban_reason: OK");
+  } catch (err) {
+    results.push(`users.ban_reason: XƏTA — ${err}`);
+  }
+
   return NextResponse.json({ done: true, results });
 }
