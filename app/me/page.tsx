@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { transactions, patients } from "@/drizzle/schema";
+import { transactions, patients, users } from "@/drizzle/schema";
 import { eq, desc } from "drizzle-orm";
 import Link from "next/link";
 import Image from "next/image";
@@ -14,6 +14,12 @@ export const dynamic = "force-dynamic";
 export default async function MePage() {
   const session = await auth();
   if (!session?.user) redirect("/login?callbackUrl=/me");
+
+  const [userRow] = await db
+    .select({ createdAt: users.createdAt, role: users.role })
+    .from(users)
+    .where(eq(users.id, session.user.id))
+    .limit(1);
 
   const myDonations = await db
     .select({
@@ -72,12 +78,18 @@ export default async function MePage() {
               <div className="text-center sm:text-left flex-1">
                 <h1 className="text-2xl font-extrabold text-white">{session.user.name}</h1>
                 <p className="text-teal-200 text-sm mt-0.5">{session.user.email}</p>
-                <div className="flex items-center justify-center sm:justify-start gap-2 mt-2">
+                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 mt-2">
                   <span className="inline-flex items-center gap-1.5 bg-white/10 border border-white/20 rounded-full px-3 py-1 text-xs text-teal-200 font-medium">
                     <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full" />
-                    Aktiv hesab
+                    {userRow?.role === "admin" ? "Admin" : "Donor"}
                   </span>
-                  <span className="text-xs text-teal-300/60">Google ilə daxil olub</span>
+                  {userRow?.createdAt && (
+                    <span className="text-xs text-teal-300/60">
+                      Qoşuldu: {new Date(userRow.createdAt).toLocaleDateString("az-AZ", {
+                        day: "numeric", month: "long", year: "numeric",
+                      })}
+                    </span>
+                  )}
                 </div>
               </div>
               {/* Çıxış */}
@@ -256,6 +268,23 @@ export default async function MePage() {
                 </div>
                 <span className="text-xs text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full">Təsdiqlənib</span>
               </div>
+              {userRow?.createdAt && (
+                <div className="flex items-center justify-between py-3 border-b border-slate-100">
+                  <div>
+                    <p className="text-sm font-medium text-slate-700">Qoşulma tarixi</p>
+                    <p className="text-sm text-slate-500 mt-0.5">
+                      {new Date(userRow.createdAt).toLocaleDateString("az-AZ", {
+                        day: "numeric", month: "long", year: "numeric",
+                      })}{" "}
+                      <span className="text-slate-400">
+                        {new Date(userRow.createdAt).toLocaleTimeString("az-AZ", {
+                          hour: "2-digit", minute: "2-digit",
+                        })}
+                      </span>
+                    </p>
+                  </div>
+                </div>
+              )}
               <div className="flex items-center justify-between py-3">
                 <div>
                   <p className="text-sm font-medium text-slate-700">Giriş üsulu</p>
