@@ -2,8 +2,11 @@ import { db } from "@/lib/db";
 import { transactions, patients } from "@/drizzle/schema";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { sql } from "drizzle-orm";
+import Pagination from "@/components/Pagination";
 
 export const revalidate = 0;
+
+const PAGE_SIZE = 25;
 
 const CATEGORY_LABELS: Record<string, string> = {
   medication:   "Dərman",
@@ -13,13 +16,38 @@ const CATEGORY_LABELS: Record<string, string> = {
   other:        "Digər",
 };
 
-export default async function AdminTransactionsPage() {
+export default async function AdminTransactionsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>;
+}) {
+  const { page: pageParam } = await searchParams;
+  const page = Math.max(1, parseInt(pageParam ?? "1", 10) || 1);
+
   type TxRow = typeof transactions.$inferSelect & { patientName: string };
   let list: TxRow[] = [];
   let totalDonations = 0;
   let totalExpenses  = 0;
+  let totalCount     = 0;
 
   try {
+    // Aggregate totals
+    const totals = await db
+      .select({
+        type:   transactions.type,
+        amount: sql<string>`sum(${transactions.amount})`,
+        count:  sql<number>`count(*)`,
+      })
+      .from(transactions)
+      .groupBy(transactions.type);
+
+    for (const row of totals) {
+      const amt = parseFloat(row.amount ?? "0");
+      if (row.type === "donation") { totalDonations += amt; totalCount += Number(row.count); }
+      else { totalExpenses += amt; totalCount += Number(row.count); }
+    }
+
+    // Paginated rows
     const raw = await db
       .select({
         id:             transactions.id,
@@ -38,21 +66,31 @@ export default async function AdminTransactionsPage() {
       })
       .from(transactions)
       .leftJoin(patients, sql`${transactions.patientId} = ${patients.id}`)
-      .orderBy(sql`${transactions.createdAt} desc`);
+      .orderBy(sql`${transactions.createdAt} desc`)
+      .limit(PAGE_SIZE)
+      .offset((page - 1) * PAGE_SIZE);
 
     list = raw.map((r) => ({ ...r, patientName: r.patientName ?? "Naməlum" }));
-    for (const t of list) {
-      const amt = parseFloat(String(t.amount));
-      if (t.type === "donation") totalDonations += amt;
-      else totalExpenses += amt;
-    }
   } catch { /* boş */ }
+
+  const totalPages = Math.ceil(totalCount / PAGE_SIZE);
 
   return (
     <div className="p-4 sm:p-6 lg:p-8">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-slate-900">Maliyyə əməliyyatları</h1>
-        <p className="text-slate-500 text-sm mt-1">Bütün ianə və xərclərin tam tarixçəsi</p>
+      <div className="mb-8 flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900">Maliyyə əməliyyatları</h1>
+          <p className="text-slate-500 text-sm mt-1">Bütün ianə və xərclərin tam tarixçəsi</p>
+        </div>
+        <a
+          href="/api/admin/export/transactions"
+          className="shrink-0 inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold bg-slate-900 text-white rounded-xl hover:bg-slate-700 transition-colors"
+        >
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+          </svg>
+          CSV ixrac
+        </a>
       </div>
 
       {/* Xülasə */}
@@ -77,7 +115,7 @@ export default async function AdminTransactionsPage() {
       <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
         <div className="flex items-center justify-between px-5 py-4 border-b border-slate-50">
           <h2 className="font-bold text-slate-900 text-sm">Tarixçə</h2>
-          <span className="text-xs text-slate-400">{list.length} qeyd</span>
+          <span className="text-xs text-slate-400">{totalCount} qeyd</span>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -142,6 +180,18 @@ export default async function AdminTransactionsPage() {
             </tbody>
           </table>
         </div>
+
+        <Pagination
+          page={page}
+          totalPages={totalPages}
+          makeHref={(p) => `/dashboard/transactions?page=${p}`}
+        />
+
+        {totalPages > 1 && (
+          <p className="text-xs text-slate-400 text-center pb-4">
+            {totalCount} qeydin {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, totalCount)}-i göstərilir
+          </p>
+        )}
       </div>
     </div>
   );

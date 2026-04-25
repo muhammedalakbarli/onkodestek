@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { volunteerRequests } from "@/drizzle/schema";
 import { isAdmin } from "@/lib/adminAuth";
 import { VolunteerSchema } from "@/lib/schemas";
+import { sendVolunteerConfirmation } from "@/lib/email";
 
 const AREA_LABELS: Record<string, string> = {
   tibbi:     "Tibbi dəstək",
@@ -72,8 +73,13 @@ export async function POST(req: NextRequest) {
 
   const [record] = await db.insert(volunteerRequests).values(data).returning();
 
-  // Admin-ə Telegram bildirişi (qeyri-bloklayan)
+  // Admin-ə Telegram + müraciətçiyə email (qeyri-bloklayan)
   notifyAdminTelegram(data).catch(console.error);
+  sendVolunteerConfirmation({
+    toEmail: data.email,
+    toName:  data.fullName,
+    area:    AREA_LABELS[data.area] ?? data.area,
+  }).catch(console.error);
 
   return NextResponse.json(record, { status: 201 });
 }

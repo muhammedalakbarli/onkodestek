@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import Pagination from "@/components/Pagination";
 import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Şəffaflıq",
@@ -13,6 +14,8 @@ import { sql } from "drizzle-orm";
 
 export const revalidate = 60;
 
+const PAGE_SIZE = 20;
+
 const CATEGORY_LABELS: Record<string, string> = {
   medication:   "Dərman",
   treatment:    "Müalicə",
@@ -21,39 +24,60 @@ const CATEGORY_LABELS: Record<string, string> = {
   other:        "Digər",
 };
 
-export default async function TransparencyPage() {
+export default async function TransparencyPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>;
+}) {
+  const { page: pageParam } = await searchParams;
+  const page = Math.max(1, parseInt(pageParam ?? "1", 10) || 1);
+
   let txList: (typeof transactions.$inferSelect & { patientName: string })[] = [];
   let totalDonations = 0;
   let totalExpenses  = 0;
+  let totalCount     = 0;
 
   try {
+    // Aggregate totals — full table scan, lightweight
+    const totals = await db
+      .select({
+        type:   transactions.type,
+        amount: sql<string>`sum(${transactions.amount})`,
+        count:  sql<number>`count(*)`,
+      })
+      .from(transactions)
+      .groupBy(transactions.type);
+
+    for (const row of totals) {
+      const amt = parseFloat(row.amount ?? "0");
+      if (row.type === "donation") { totalDonations += amt; totalCount += Number(row.count); }
+      else { totalExpenses += amt; totalCount += Number(row.count); }
+    }
+
+    // Paginated rows
     const raw = await db
       .select({
-        id: transactions.id,
-        patientId: transactions.patientId,
-        patientName: patients.fullName,
-        type: transactions.type,
-        amount: transactions.amount,
-        category: transactions.category,
-        description: transactions.description,
-        receiptUrl: transactions.receiptUrl,
-        donorUserId: transactions.donorUserId,
-        donorName: transactions.donorName,
+        id:              transactions.id,
+        patientId:       transactions.patientId,
+        patientName:     patients.fullName,
+        type:            transactions.type,
+        amount:          transactions.amount,
+        category:        transactions.category,
+        description:     transactions.description,
+        receiptUrl:      transactions.receiptUrl,
+        donorUserId:     transactions.donorUserId,
+        donorName:       transactions.donorName,
         donorTelegramId: transactions.donorTelegramId,
-        isAnonymous: transactions.isAnonymous,
-        createdAt: transactions.createdAt,
+        isAnonymous:     transactions.isAnonymous,
+        createdAt:       transactions.createdAt,
       })
       .from(transactions)
       .leftJoin(patients, sql`${transactions.patientId} = ${patients.id}`)
-      .orderBy(transactions.createdAt);
+      .orderBy(sql`${transactions.createdAt} desc`)
+      .limit(PAGE_SIZE)
+      .offset((page - 1) * PAGE_SIZE);
 
     txList = raw.map((r) => ({ ...r, patientName: r.patientName ?? "Naməlum" }));
-
-    for (const t of txList) {
-      const amt = parseFloat(String(t.amount));
-      if (t.type === "donation") totalDonations += amt;
-      else totalExpenses += amt;
-    }
   } catch {
     // DB bağlantısı yoxdursa boş göstər
   }
@@ -62,6 +86,7 @@ export default async function TransparencyPage() {
   const efficiencyPct = totalDonations > 0
     ? Math.round((totalExpenses / totalDonations) * 100)
     : 0;
+  const totalPages = Math.ceil(totalCount / PAGE_SIZE);
 
   return (
     <>
@@ -131,7 +156,7 @@ export default async function TransparencyPage() {
         </div>
 
         {/* Əməliyyatlar cədvəli */}
-        {txList.length === 0 ? (
+        {totalCount === 0 ? (
           <div className="text-center py-24 bg-white rounded-2xl border border-slate-100">
             <div className="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
               <svg className="w-7 h-7 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.6">
@@ -144,7 +169,7 @@ export default async function TransparencyPage() {
           <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
             <div className="px-5 py-4 border-b border-slate-50 flex items-center justify-between">
               <h2 className="font-bold text-slate-900">Əməliyyat tarixçəsi</h2>
-              <span className="text-xs text-slate-400">{txList.length} qeyd</span>
+              <span className="text-xs text-slate-400">{totalCount} qeyd</span>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
@@ -213,6 +238,18 @@ export default async function TransparencyPage() {
                 </tbody>
               </table>
             </div>
+
+            <Pagination
+              page={page}
+              totalPages={totalPages}
+              makeHref={(p) => `/transparency?page=${p}`}
+            />
+
+            {totalPages > 1 && (
+              <p className="text-xs text-slate-400 text-center pb-4">
+                {totalCount} qeydin {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, totalCount)}-i göstərilir
+              </p>
+            )}
           </div>
         )}
 
