@@ -33,19 +33,20 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        // İlk giriş: user məlumatları token-ə yazılır
         token.id    = user.id;
         token.email = user.email;
-        const isAdmin = ADMIN_EMAILS.includes((user.email ?? "").toLowerCase());
-        token.role  = isAdmin ? "admin" : ((user as { role?: string }).role ?? "donor");
+      }
+      // Hər girişdə ADMIN_EMAILS yenidən yoxlanılır —
+      // env var dəyişsə köhnə tokenli istifadəçilər də dərhal admin olur
+      const email   = (token.email as string | undefined) ?? "";
+      const isAdmin = ADMIN_EMAILS.length > 0 && ADMIN_EMAILS.includes(email.toLowerCase());
+      token.role    = isAdmin ? "admin" : "donor";
 
-        // Admin rolunu DB-də yenilə (fire-and-forget)
-        if (isAdmin) {
-          db.update(users)
-            .set({ role: "admin" })
-            .where(eq(users.email, user.email!))
-            .catch(() => {});
-        }
+      if (isAdmin && user) {
+        db.update(users)
+          .set({ role: "admin" })
+          .where(eq(users.email, email))
+          .catch(() => {});
       }
       return token;
     },
