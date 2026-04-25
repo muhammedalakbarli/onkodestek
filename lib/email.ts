@@ -1,8 +1,7 @@
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-const FROM   = process.env.RESEND_FROM ?? "onboarding@resend.dev";
-const APP    = process.env.NEXT_PUBLIC_APP_URL ?? "https://onkodestek.vercel.app";
+const FROM = process.env.RESEND_FROM ?? "onboarding@resend.dev";
+const APP  = process.env.NEXT_PUBLIC_APP_URL ?? "https://onkodestek.vercel.app";
 
 export async function sendDonationThankYou({
   toEmail,
@@ -18,6 +17,7 @@ export async function sendDonationThankYou({
   patientId: number;
 }) {
   if (!process.env.RESEND_API_KEY) return;
+  const resend = new Resend(process.env.RESEND_API_KEY);
   try {
     await resend.emails.send({
       from: FROM,
