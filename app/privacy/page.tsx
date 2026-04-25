@@ -30,13 +30,16 @@ export default function PrivacyPage() {
               <li><strong>Telegram botu:</strong> Telegram istifadəçi ID-si, müraciət məlumatları</li>
               <li><strong>Texniki məlumatlar:</strong> IP ünvanı (spam mühafizəsi üçün), brauzer növü</li>
             </ul>
+            <p className="mt-3 p-3 bg-amber-50 border border-amber-100 rounded-lg text-amber-800">
+              <strong>Həssas məlumat:</strong> Xəstələrin tibbi sənədləri həssas şəxsi məlumat kateqoriyasına daxildir. Bu məlumatlar yalnız verifikasiya məqsədilə istifadə olunur və icazəsiz girişin qarşısını almaq üçün şifrələnmiş (encrypted) şəkildə saxlanılır.
+            </p>
           </section>
 
           <section>
             <h2 className="text-lg font-bold text-slate-900 mb-3">2. Məlumatları nə üçün istifadə edirik?</h2>
             <ul className="list-disc pl-5 space-y-1">
               <li>Müraciətləri yoxlamaq və platformada idarə etmək</li>
-              <li>İzləmə kodu vasitəsilə müraciət statusunu göstərmək</li>
+              <li>İzləmə kodu vasitəsilə müraciət statusunu göstərmək — izləmə kodu müraciətçinin şəxsi identifikasiyasını gizli saxlayaraq, ictimaiyyətə ianə gedişatını izləmək imkanı verir</li>
               <li>Donor hesabını idarə etmək və ianə tarixçəsini saxlamaq</li>
               <li>Spam və saxta müraciətlərin qarşısını almaq</li>
             </ul>
@@ -55,7 +58,7 @@ export default function PrivacyPage() {
             <h2 className="text-lg font-bold text-slate-900 mb-3">4. Məlumatlar nə qədər saxlanılır?</h2>
             <ul className="list-disc pl-5 space-y-1">
               <li>Müraciət məlumatları: platforma fəaliyyət göstərdiyi müddət</li>
-              <li>İstifadəçi hesabı: hesab silinənə qədər</li>
+              <li>İstifadəçi hesabı: hesab silindikdə şəxsi məlumatlar silinir, lakin maliyyə şəffaflığı və hesabatlılıq məqsədilə ianə məbləğləri anonim olaraq saxlanıla bilər</li>
               <li>IP ünvanları (rate limiting): 1 saat</li>
             </ul>
           </section>
@@ -74,6 +77,11 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-lg font-bold text-slate-900 mb-3">6. Cookies</h2>
             <p>Platform yalnız autentifikasiya üçün zəruri cookies istifadə edir. Reklam və izləmə cookie-ləri istifadə edilmir.</p>
+          </section>
+
+          <section>
+            <h2 className="text-lg font-bold text-slate-900 mb-3">7. Hüquqi əsas</h2>
+            <p>Bu siyasət Azərbaycan Respublikasının &quot;Fərdi məlumatlar haqqında&quot; qanununa və beynəlxalq data qorunması prinsiplərinə (GDPR) uyğun olaraq hazırlanmışdır.</p>
           </section>
 
         </div>
