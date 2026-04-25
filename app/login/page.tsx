@@ -67,7 +67,7 @@ export default async function LoginPage({
 
   // ── Normal donor — artıq daxil olub ─────────────────────────────────────────
   if (session?.user) {
-    redirect(callbackUrl ?? "/patients");
+    redirect("/patients");
   }
 
   // ── Giriş formu ─────────────────────────────────────────────────────────────
@@ -156,7 +156,7 @@ export default async function LoginPage({
           {/* Google — istifadəçi girişi */}
           <form action={async () => {
             "use server";
-            await signIn("google", { redirectTo: callbackUrl ?? "/patients" });
+            await signIn("google", { redirectTo: "/login" });
           }}>
             <button
               type="submit"
@@ -214,20 +214,6 @@ export default async function LoginPage({
             </form>
           </div>
 
-          {/* Admin girişi */}
-          <div className="mt-6 pt-5 border-t border-slate-100 text-center">
-            <form action={async () => {
-              "use server";
-              await signIn("google", { redirectTo: "/api/auth/promote-admin" });
-            }}>
-              <button
-                type="submit"
-                className="text-xs text-slate-400 hover:text-slate-700 transition-colors font-medium"
-              >
-                Admin paneli →
-              </button>
-            </form>
-          </div>
         </div>
 
         <p className="mt-12 text-xs text-slate-400 text-center">
