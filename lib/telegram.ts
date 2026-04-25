@@ -1,4 +1,4 @@
-import { Bot, webhookCallback, InlineKeyboard } from "grammy";
+import { Bot, InlineKeyboard } from "grammy";
 import { db } from "@/lib/db";
 import { patients } from "@/drizzle/schema";
 import { eq } from "drizzle-orm";
@@ -264,5 +264,4 @@ bot.command("izle", async (ctx) => {
   }
 });
 
-// ── Webhook handler ───────────────────────────────────────────────────────────
-export const handleWebhook = webhookCallback(bot, "std/http");
+// bot artıq yuxarıda export const bot = new Bot(...) olaraq ixrac edilib

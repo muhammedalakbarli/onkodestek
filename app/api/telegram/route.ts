@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { handleWebhook } from "@/lib/telegram";
+import { bot } from "@/lib/telegram";
 
 export async function POST(req: NextRequest) {
   // Yalnız TELEGRAM_WEBHOOK_SECRET set edilibsə yoxla
@@ -12,10 +12,13 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    return await handleWebhook(req);
+    const update = await req.json();
+    await bot.handleUpdate(update);
+    return NextResponse.json({ ok: true });
   } catch (err) {
     console.error("Telegram webhook error:", err);
-    return NextResponse.json({ error: "Internal error" }, { status: 500 });
+    // 200 qaytar ki Telegram yenidən cəhd etməsin
+    return NextResponse.json({ ok: true });
   }
 }
 
