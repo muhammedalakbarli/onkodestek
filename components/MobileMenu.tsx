@@ -15,6 +15,7 @@ const NAV_LINKS = [
   { href: "/transparency", label: "Şəffaflıq" },
   { href: "/donate",       label: "İanə et" },
   { href: "/about",        label: "Haqqımızda" },
+  { href: "/volunteer",    label: "Könüllü ol" },
   { href: "/contact",      label: "Əlaqə" },
 ];
 
