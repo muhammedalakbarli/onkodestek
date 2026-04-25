@@ -1,14 +1,7 @@
 import { auth, signIn, signOut } from "@/auth";
 import { redirect } from "next/navigation";
-import { cookies } from "next/headers";
-import { signAdminToken, COOKIE_NAME, TOKEN_TTL } from "@/lib/auth";
 import Image from "next/image";
 import Link from "next/link";
-
-const ADMIN_EMAILS = (process.env.ADMIN_EMAILS ?? "")
-  .split(",")
-  .map((e) => e.trim().toLowerCase())
-  .filter(Boolean);
 
 export default async function LoginPage({
   searchParams,
@@ -20,23 +13,6 @@ export default async function LoginPage({
 
   // ── Admin session varsa — seçim göstər ──────────────────────────────────────
   if (session?.user?.role === "admin") {
-    async function grantAdmin() {
-      "use server";
-      const s = await auth();
-      const em = s?.user?.email?.toLowerCase() ?? "";
-      if (!ADMIN_EMAILS.includes(em)) return;
-      const token = await signAdminToken();
-      const jar   = await cookies();
-      jar.set(COOKIE_NAME, token, {
-        httpOnly: true,
-        secure:   process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        maxAge:   TOKEN_TTL,
-        path:     "/",
-      });
-      redirect("/dashboard");
-    }
-
     return (
       <div className="min-h-screen bg-white flex items-center justify-center px-6">
         <div className="w-full max-w-sm">
@@ -52,18 +28,16 @@ export default async function LoginPage({
           </p>
 
           <div className="space-y-3">
-            {/* Admin paneli */}
-            <form action={grantAdmin}>
-              <button
-                type="submit"
-                className="w-full flex items-center justify-center gap-2.5 bg-slate-900 hover:bg-slate-700 text-white font-semibold py-3.5 rounded-xl text-sm transition-colors"
-              >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18" />
-                </svg>
-                Admin paneli
-              </button>
-            </form>
+            {/* Admin paneli — promote-admin route cookie qoyur + /dashboard-a yönləndirir */}
+            <a
+              href="/api/auth/promote-admin"
+              className="w-full flex items-center justify-center gap-2.5 bg-slate-900 hover:bg-slate-700 text-white font-semibold py-3.5 rounded-xl text-sm transition-colors"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18" />
+              </svg>
+              Admin paneli
+            </a>
 
             {/* İstifadəçi kimi */}
             <a
