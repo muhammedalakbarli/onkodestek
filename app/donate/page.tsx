@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Link from "next/link";
+import DonateWidget from "./DonateWidget";
 
 export const metadata: Metadata = {
   title: "Platformaya ianə — OnkoDəstək",
@@ -30,6 +31,8 @@ export default async function DonatePage() {
   } catch { /* DB bağlantısı yoxdursa boş göstər */ }
 
   const total = parseFloat(totalRaw);
+  const cardNumber = process.env.PLATFORM_CARD_NUMBER ?? "Tezliklə əlavə ediləcək";
+  const iban       = process.env.PLATFORM_IBAN        ?? "Tezliklə əlavə ediləcək";
 
   return (
     <>
@@ -72,30 +75,8 @@ export default async function DonatePage() {
             </div>
           </div>
 
-          {/* Ödəniş məlumatları */}
-          <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
-            <div className="px-6 py-5 border-b border-slate-100">
-              <h2 className="font-bold text-slate-900">Ödəniş məlumatları</h2>
-              <p className="text-sm text-slate-500 mt-0.5">Aşağıdakı hesaba köçürmə edin</p>
-            </div>
-            <div className="p-6 space-y-4">
-              <PayRow label="Bank" value="Kapital Bank" />
-              <PayRow label="Kart nömrəsi" value="5169 **** **** ****" copyable />
-              <PayRow label="IBAN" value="AZ** KAPS **** **** **** **** ****" copyable />
-              <PayRow label="Alıcı" value="OnkoDəstək Platforması" />
-              <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 flex items-start gap-3">
-                <svg className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
-                </svg>
-                <p className="text-xs text-amber-700">
-                  Kart məlumatları tezliklə əlavə ediləcək. Ətraflı məlumat üçün{" "}
-                  <a href="https://t.me/onkodestek_admin" target="_blank" rel="noopener noreferrer" className="font-semibold underline">
-                    admin ilə əlaqə saxlayın
-                  </a>.
-                </p>
-              </div>
-            </div>
-          </div>
+          {/* İnteraktiv bağış widget */}
+          <DonateWidget cardNumber={cardNumber} iban={iban} />
 
           {/* Platform nə üçün pul lazımdır */}
           <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
@@ -191,16 +172,3 @@ export default async function DonatePage() {
   );
 }
 
-function PayRow({ label, value, copyable }: { label: string; value: string; copyable?: boolean }) {
-  return (
-    <div className="flex items-center justify-between py-2 border-b border-slate-50 last:border-0">
-      <span className="text-xs font-medium text-slate-400 w-32 shrink-0">{label}</span>
-      <div className="flex items-center gap-2">
-        <span className="text-sm font-mono text-slate-800">{value}</span>
-        {copyable && (
-          <span className="text-xs text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">kopyala</span>
-        )}
-      </div>
-    </div>
-  );
-}

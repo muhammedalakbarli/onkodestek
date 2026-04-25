@@ -1,9 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { platformDonations } from "@/drizzle/schema";
-import { isAdmin } from "@/lib/adminAuth";
-import { PlatformDonationSchema } from "@/lib/schemas";
 import { desc } from "drizzle-orm";
+import { z } from "zod";
+
+const PublicDonateSchema = z.object({
+  donorName:   z.string().max(255).optional().nullable(),
+  amount:      z.coerce.number().positive().max(100000),
+  isAnonymous: z.boolean().default(false),
+  note:        z.string().max(500).optional().nullable(),
+});
 
 // GET /api/platform-donations — ictimai
 export async function GET() {
@@ -14,20 +20,22 @@ export async function GET() {
   return NextResponse.json(list);
 }
 
-// POST /api/platform-donations — yalnız admin
+// POST /api/platform-donations — ictimai (bağış bildirişi)
 export async function POST(req: NextRequest) {
-  if (!(await isAdmin(req))) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  const parsed = PlatformDonationSchema.safeParse(await req.json());
+  const parsed = PublicDonateSchema.safeParse(await req.json());
   if (!parsed.success) {
-    return NextResponse.json(
-      { error: "Məlumatlar düzgün deyil", details: parsed.error.flatten().fieldErrors },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: "Məlumatlar düzgün deyil" }, { status: 400 });
   }
 
-  const [record] = await db.insert(platformDonations).values(parsed.data).returning();
+  const { donorName, amount, isAnonymous, note } = parsed.data;
+  const [record] = await db
+    .insert(platformDonations)
+    .values({
+      donorName: isAnonymous ? null : (donorName ?? null),
+      amount: amount.toFixed(2),
+      isAnonymous,
+      note: note ?? null,
+    })
+    .returning();
   return NextResponse.json(record, { status: 201 });
 }
