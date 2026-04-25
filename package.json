@@ -16,6 +16,8 @@
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.11.2",
+    "@stripe/react-stripe-js": "^6.2.0",
+    "@stripe/stripe-js": "^9.3.1",
     "@vercel/blob": "^2.3.3",
     "clsx": "^2.1.1",
     "dotenv": "^17.4.2",
@@ -29,6 +31,7 @@
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "resend": "^6.12.2",
+    "stripe": "^22.1.0",
     "tailwind-merge": "^3.5.0",
     "zod": "^4.3.6"
   },

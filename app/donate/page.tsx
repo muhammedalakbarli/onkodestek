@@ -31,8 +31,6 @@ export default async function DonatePage() {
   } catch { /* DB bağlantısı yoxdursa boş göstər */ }
 
   const total = parseFloat(totalRaw);
-  const cardNumber = process.env.PLATFORM_CARD_NUMBER ?? "Tezliklə əlavə ediləcək";
-  const iban       = process.env.PLATFORM_IBAN        ?? "Tezliklə əlavə ediləcək";
 
   return (
     <>
@@ -76,7 +74,7 @@ export default async function DonatePage() {
           </div>
 
           {/* İnteraktiv bağış widget */}
-          <DonateWidget cardNumber={cardNumber} iban={iban} />
+          <DonateWidget />
 
           {/* Platform nə üçün pul lazımdır */}
           <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
