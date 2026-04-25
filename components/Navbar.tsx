@@ -22,7 +22,7 @@ export default async function Navbar() {
           />
           <div className="leading-none">
             <span className="font-bold text-slate-900 text-base tracking-tight">
-              onko<span className="text-teal-600">dəstək</span>
+              Onko<span className="text-teal-600">Dəstək</span>
             </span>
             <span className="block text-[10px] text-slate-400 font-medium tracking-wide">Həyata dəstək ol</span>
           </div>
