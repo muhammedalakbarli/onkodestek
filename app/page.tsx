@@ -3,6 +3,7 @@ import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import PatientFeed from "@/components/PatientFeed";
 import RecentDonorsFeed from "@/components/RecentDonorsFeed";
+import AzOrnament from "@/components/AzOrnament";
 import { db } from "@/lib/db";
 import { patients, transactions } from "@/drizzle/schema";
 import { eq, sql, sum, desc } from "drizzle-orm";
@@ -68,7 +69,9 @@ export default async function HomePage() {
       <Navbar />
 
       {/* ── Kompakt header ─────────────────────────────────────────────────── */}
-      <div className="bg-gradient-to-r from-blue-800 via-teal-800 to-blue-900 text-white">
+      <div className="bg-gradient-to-r from-blue-800 via-teal-800 to-blue-900 text-white relative overflow-hidden">
+        <AzOrnament corner="tl" size={220} opacity={0.12} />
+        <AzOrnament corner="tr" size={220} opacity={0.12} />
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
             {/* Sol: başlıq */}
@@ -121,7 +124,7 @@ export default async function HomePage() {
       </div>
 
       {/* ── Feed ───────────────────────────────────────────────────────────── */}
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+      <main className="az-bg max-w-6xl mx-auto px-4 sm:px-6 py-8 relative">
         {/* Bölmə başlığı */}
         <div className="flex items-center justify-between mb-6">
           <div>

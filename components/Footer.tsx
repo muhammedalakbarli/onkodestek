@@ -1,9 +1,12 @@
 import Link from "next/link";
 import Image from "next/image";
+import AzOrnament from "./AzOrnament";
 
 export default function Footer() {
   return (
-    <footer className="bg-slate-950 text-slate-400">
+    <footer className="bg-slate-950 text-slate-400 relative overflow-hidden">
+      <AzOrnament corner="tl" size={200} opacity={0.06} />
+      <AzOrnament corner="br" size={200} opacity={0.06} />
 
       {/* ── Əsas bölmə ─────────────────────────────────────────────────────── */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-14">
