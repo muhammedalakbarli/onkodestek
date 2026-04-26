@@ -25,13 +25,16 @@ export default function BulkEmailPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ subject, body, audience }),
       });
-      const data = await res.json();
+      const text = await res.text();
+      let data: Record<string, unknown> = {};
+      try { data = JSON.parse(text); } catch { /* non-JSON response */ }
+
       if (!res.ok) {
-        setErrMsg(data.error ?? "Xəta baş verdi");
+        setErrMsg((data.error as string) ?? `Server xətası (${res.status}): ${text.slice(0, 120)}`);
         setState("error");
         return;
       }
-      setResult(data);
+      setResult(data as { sent: number; failed: number; total: number });
       setState("done");
     } catch {
       setErrMsg("Şəbəkə xətası");
