@@ -124,7 +124,8 @@ export default async function HomePage() {
       </div>
 
       {/* ── Feed ───────────────────────────────────────────────────────────── */}
-      <main className="az-bg max-w-6xl mx-auto px-4 sm:px-6 py-8 relative">
+      <div className="az-bg">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8 relative">
         {/* Bölmə başlığı */}
         <div className="flex items-center justify-between mb-6">
           <div>
@@ -163,6 +164,7 @@ export default async function HomePage() {
           />
         )}
       </main>
+      </div>
 
       <Footer />
       <RecentDonorsFeed />
