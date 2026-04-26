@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { patients, transactions } from "@/drizzle/schema";
-import { sql } from "drizzle-orm";
+import { sql, gte, and, eq } from "drizzle-orm";
 import { formatCurrency, formatDate } from "@/lib/utils";
 
 export const revalidate = 0;
@@ -19,6 +19,8 @@ export default async function DashboardPage() {
 
   let recentPatients: (typeof patients.$inferSelect)[] = [];
   let recentTx: (typeof transactions.$inferSelect)[] = [];
+  // Last 7 days daily donation totals
+  let weeklyData: { day: string; amount: number }[] = [];
 
   try {
     const [ps] = await db.select({
@@ -48,6 +50,27 @@ export default async function DashboardPage() {
 
     recentTx = await db.select().from(transactions)
       .orderBy(sql`created_at desc`).limit(8);
+
+    // Build last-7-day buckets
+    const since7 = new Date(Date.now() - 6 * 24 * 60 * 60 * 1000);
+    since7.setHours(0, 0, 0, 0);
+    const rows = await db
+      .select({
+        day:    sql<string>`date_trunc('day', created_at)::date::text`,
+        amount: sql<number>`coalesce(sum(amount), 0)`,
+      })
+      .from(transactions)
+      .where(and(eq(transactions.type, "donation"), gte(transactions.createdAt, since7)))
+      .groupBy(sql`date_trunc('day', created_at)`)
+      .orderBy(sql`date_trunc('day', created_at)`);
+
+    const dayMap = new Map(rows.map((r) => [r.day, Number(r.amount)]));
+    weeklyData = Array.from({ length: 7 }, (_, i) => {
+      const d = new Date(since7.getTime() + i * 24 * 60 * 60 * 1000);
+      const key = d.toISOString().slice(0, 10);
+      const label = d.toLocaleDateString("az-AZ", { weekday: "short" });
+      return { day: label, amount: dayMap.get(key) ?? 0 };
+    });
   } catch {
     // DB bağlantısı yoxdursa boş göstər
   }
@@ -109,6 +132,38 @@ export default async function DashboardPage() {
           <p className="text-2xl font-extrabold text-blue-700">{formatCurrency(stats.balance)}</p>
         </div>
       </div>
+
+      {/* Həftəlik ianə analitikası */}
+      {(() => {
+        const maxAmt = Math.max(...weeklyData.map((d) => d.amount), 1);
+        return (
+          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 mb-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="font-bold text-slate-900 text-sm">Son 7 gün — ianələr</h2>
+              <span className="text-xs text-slate-400">AZN</span>
+            </div>
+            <div className="flex items-end gap-2 h-28">
+              {weeklyData.map((d) => {
+                const heightPct = maxAmt > 0 ? (d.amount / maxAmt) * 100 : 0;
+                return (
+                  <div key={d.day} className="flex flex-col items-center gap-1 flex-1">
+                    <span className="text-[10px] text-slate-400 leading-none">
+                      {d.amount > 0 ? Math.round(d.amount) : ""}
+                    </span>
+                    <div className="w-full rounded-t-md bg-emerald-100 relative" style={{ height: "80px" }}>
+                      <div
+                        className="absolute bottom-0 w-full rounded-t-md bg-emerald-500 transition-all"
+                        style={{ height: `${heightPct}%` }}
+                      />
+                    </div>
+                    <span className="text-[10px] text-slate-500 mt-0.5">{d.day}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })()}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Son müraciətlər */}

@@ -1,0 +1,16 @@
+{
+  "name": "OnkoDəstək",
+  "short_name": "OnkoDəstək",
+  "description": "Azərbaycanda onkoloji xəstəliklərə qarşı şəffaf xeyriyyəçilik platforması",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#0d9488",
+  "orientation": "portrait-primary",
+  "icons": [
+    { "src": "/logo.jpeg", "sizes": "192x192", "type": "image/jpeg" },
+    { "src": "/logo.jpeg", "sizes": "512x512", "type": "image/jpeg" }
+  ],
+  "categories": ["health", "social"],
+  "lang": "az"
+}

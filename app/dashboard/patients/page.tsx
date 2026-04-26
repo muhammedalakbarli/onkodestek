@@ -5,6 +5,27 @@ import { sql } from "drizzle-orm";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { CheckCircle2 } from "lucide-react";
 
+function urgencyScore(p: typeof patients.$inferSelect): number {
+  const goal = Number(p.goalAmount);
+  const collected = Number(p.collectedAmount);
+  const pct = goal > 0 ? collected / goal : 1;
+  const daysSince = (Date.now() - new Date(p.createdAt).getTime()) / 86400000;
+  // Higher score = more urgent: low completion % + old submission
+  return Math.round((1 - pct) * 100 + Math.min(daysSince, 60));
+}
+
+function UrgencyBadge({ score }: { score: number }) {
+  if (score >= 120) return (
+    <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-red-50 text-red-600 border border-red-200">Yüksək</span>
+  );
+  if (score >= 60) return (
+    <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-600 border border-amber-200">Orta</span>
+  );
+  return (
+    <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-slate-50 text-slate-500 border border-slate-200">Aşağı</span>
+  );
+}
+
 export const revalidate = 0;
 
 const STATUS_BADGE: Record<string, string> = {
@@ -64,7 +85,7 @@ export default async function AdminPatientsPage() {
           <table className="w-full text-sm">
             <thead className="bg-slate-50 border-b border-slate-100">
               <tr>
-                {["Ad / Diaqnoz", "Status", "Hədəf", "Toplanıb", "İctimai", "Tarix", ""].map((h) => (
+                {["Ad / Diaqnoz", "Status", "Prioritet", "Hədəf", "Toplanıb", "İctimai", "Tarix", ""].map((h) => (
                   <th key={h} className="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap">
                     {h}
                   </th>
@@ -74,7 +95,7 @@ export default async function AdminPatientsPage() {
             <tbody className="divide-y divide-slate-50">
               {list.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-5 py-12 text-center text-slate-400">
+                  <td colSpan={8} className="px-5 py-12 text-center text-slate-400">
                     Hələlik müraciət yoxdur.
                   </td>
                 </tr>
@@ -88,6 +109,9 @@ export default async function AdminPatientsPage() {
                     <span className={`text-[11px] font-semibold px-2.5 py-1 rounded-full border ${STATUS_BADGE[p.status] ?? STATUS_BADGE.pending}`}>
                       {STATUS_LABEL[p.status] ?? p.status}
                     </span>
+                  </td>
+                  <td className="px-5 py-4">
+                    <UrgencyBadge score={urgencyScore(p)} />
                   </td>
                   <td className="px-5 py-4 text-slate-600 font-medium whitespace-nowrap">
                     {formatCurrency(p.goalAmount)}

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { rateLimit } from "@/lib/rateLimit";
 
 const APP = "https://onkodestek.vercel.app";
 
@@ -11,6 +12,12 @@ const Schema = z.object({
 });
 
 export async function POST(req: NextRequest) {
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+  const { ok } = rateLimit(`payriff:${ip}`);
+  if (!ok) {
+    return NextResponse.json({ error: "Çox tez-tez cəhd edirsiniz. Bir az gözləyin." }, { status: 429 });
+  }
+
   const key      = process.env.PAYRIFF_SECRET_KEY;
   const merchant = process.env.PAYRIFF_MERCHANT_ID;
   if (!key || !merchant) {
