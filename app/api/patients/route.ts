@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { patients, botSessions } from "@/drizzle/schema";
-import { eq, like } from "drizzle-orm";
+import { eq, like, desc } from "drizzle-orm";
 import { PatientCreateSchema } from "@/lib/schemas";
 
 const APP = "https://onkodestek.vercel.app";
@@ -45,19 +45,26 @@ async function notifySubscribers(fullName: string, diagnosis: string, patientId:
   );
 }
 
-// GET /api/patients — ictimai xəstələri gətir
-export async function GET() {
+// GET /api/patients?offset=0&limit=9 — ictimai xəstələri səhifələnmiş gətir
+export async function GET(req: NextRequest) {
+  const { searchParams } = new URL(req.url);
+  const offset = Math.max(0, parseInt(searchParams.get("offset") ?? "0"));
+  const limit  = Math.min(12, Math.max(1, parseInt(searchParams.get("limit") ?? "9")));
+
   try {
-    const list = await db
+    const rows = await db
       .select()
       .from(patients)
       .where(eq(patients.isPublic, true))
-      .orderBy(patients.createdAt);
+      .orderBy(desc(patients.createdAt))
+      .limit(limit + 1)
+      .offset(offset);
 
-    return NextResponse.json(list);
+    const hasMore = rows.length > limit;
+    return NextResponse.json({ patients: rows.slice(0, limit), hasMore });
   } catch (err) {
     console.error(err);
-    return NextResponse.json({ error: "Server xətası" }, { status: 500 });
+    return NextResponse.json({ patients: [], hasMore: false }, { status: 500 });
   }
 }
 
