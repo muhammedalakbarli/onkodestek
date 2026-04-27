@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { getUserBanStatus } from "@/lib/checkBan";
+import ShabakaBackground from "@/components/ShabakaBackground";
 import "./globals.css";
 
 const inter = Inter({
@@ -74,6 +75,7 @@ export default async function RootLayout({
   return (
     <html lang="az">
       <body className={`${inter.variable} font-sans bg-slate-50 text-slate-900 antialiased min-h-full flex flex-col`}>
+        <ShabakaBackground />
         {children}
       </body>
     </html>
