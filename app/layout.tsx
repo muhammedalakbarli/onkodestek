@@ -74,7 +74,7 @@ export default async function RootLayout({
 
   return (
     <html lang="az">
-      <body className={`${inter.variable} font-sans bg-slate-50 text-slate-900 antialiased min-h-full flex flex-col`}>
+      <body className={`${inter.variable} font-sans text-slate-900 antialiased min-h-full flex flex-col`}>
         <ShabakaBackground />
         {children}
       </body>

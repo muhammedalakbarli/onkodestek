@@ -8,8 +8,11 @@
   --primary-dark: #1e3a8a;
 }
 
-body {
+html {
   background-color: var(--background);
+}
+
+body {
   color: var(--foreground);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
